@@ -1,6 +1,6 @@
 VERSION=lab2
 BRANCH=main
-MES=default
+MES=test git push
 
 OBJS = parser.o driver.o token.o main.o 
 LLVMCONFIG = llvm-config
