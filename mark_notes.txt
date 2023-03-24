@@ -1,0 +1,32 @@
+//数字运算符
+%token INT FLOAT ID
+
+//终止符  ； ，
+%token SEMI COMMA 
+
+//
+%token ASSIGNOP 
+
+
+//关系运算符
+%token RELOP_GT RELOP_LT RELOP_GE RELOP_LE RELOP_EQ RELOP_NEQ  
+
+//算术运算符
+%token PULS MINUS STAR DIV
+
+//逻辑运算符&& || . !
+%token AND OR DOT NOT
+
+//连接符号
+%token LP RP LB RB LC RC
+
+//保留字
+%type STRUCT RETURN IF ELSE WHILE
+
+
+//高层定义类型
+%type TYPE
+
+%type RELOP
+
+%%
