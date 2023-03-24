@@ -1,3 +1,7 @@
+VERSION=lab2
+BRANCH=main
+MES=default
+
 OBJS = parser.o driver.o token.o main.o 
 LLVMCONFIG = llvm-config
 CPPFLAGS =  -std=c++11 -fpermissive
@@ -27,19 +31,12 @@ $.o: $.cpp
 	g++ -c $(CPPFLAGS) -o $@ $<
 
 
-
-
 build:clean  parser
 
 all: build
 
 $(CASE):
 	
-
-alltest: $(CASE)
-	cat $(TEST_PATH)/$<
-	@./parser $(TEST_PATH)/$<
-
 
 test: clean parser 
 	@echo ;echo
@@ -49,7 +46,13 @@ test: clean parser
 
 	@./parser $(TEST_PATH)/$(MAIN_CASE)
 	
-.PHONY: clean
+
+git:
+	git add .
+	git commit -m "$(MES)"
+	git push github $(BRANCH) 
+
+.PHONY: clean  all test
 
 
 
