@@ -8,14 +8,24 @@ typedef enum nodeType {
     TOKEN_STR,    //string constance
     TOKEN_ID,
     TOKEN_TYPE,
-    // TOKEN_COMMA,
-    // TOKEN_SEMI,
-    // TOKEN_ASSIGNOP,
-    // TOKEN_RELOP,
-    // TOKEN_PLUS,
-    // TOKEN_MINUS,
     TOKEN_OTHER,
     NOT_A_TOKEN
-
 } NodeType;
+
+//define 4 kind variabal format 
+typedef enum _kind { BASIC, ARRAY, STRUCTURE, FUNCTION } Kind;
+
+/*
+define all base type
+guarantee scalability
+
+*/
+typedef enum _basicType { INT_TYPE, FLOAT_TYPE,STR_TYPE } BasicType;
+
+
+
+
+
+
+
 #endif

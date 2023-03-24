@@ -3,6 +3,7 @@
 
 
 #include "ASTNodes.hpp"
+#include "enum.hpp"
 /*
     定义了符号表以及基本相应属性实现
 */
@@ -28,7 +29,6 @@ typedef struct tableItem* pItem;
 typedef struct hashTable* pHash;
 typedef struct stack* pStack;
 typedef struct table* pTable;
-
 
 
 typedef struct type {
