@@ -1,6 +1,6 @@
 VERSION=lab2
 BRANCH=main
-MES=design reporter 
+MES=design 
 
 OBJS = parser.o driver.o token.o main.o 
 LLVMCONFIG = llvm-config
@@ -10,7 +10,7 @@ LIBS = ` `
 TEST_PATH=./Test
 WARN_FLAG= --no-warnings
 CASE=$(find $(TEST_PATH) -name *.cmm)
-MAIN_CASE=2.cmm
+MAIN_CASE=test1.cmm
 
 parser: $(OBJS)
 	g++ -o $@ $(OBJS)  $(LDFLAGS) $(WARN_FLAG)
@@ -38,7 +38,7 @@ all: build
 $(CASE):
 	
 
-test: clean parser 
+test:  parser 
 	@echo ;echo
 	@echo _________TEST $(MAIN_CASE) TEST_____________
 	@cat $(TEST_PATH)/$(MAIN_CASE)

@@ -2,4 +2,6 @@ int main()
 {
 	int i = 1;
 	int j = 2;
+	int a[10];
+	a[1.1]=10;
 }
