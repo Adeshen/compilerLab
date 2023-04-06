@@ -22,7 +22,6 @@ static inline unsigned int getHashCode(char* name) {
     return val;
 }
 
-
 typedef struct type* pType;
 typedef struct fieldList* pFieldList;
 typedef struct tableItem* pItem;

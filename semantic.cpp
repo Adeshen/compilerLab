@@ -1,6 +1,24 @@
 #include "semantic.h"
 
+
+
+
+#ifndef SEMANTIC_CPP
+#define SEMANTIC_cpp
 pTable tabel;
+
+
+#endif // !SEMANTIC_CPP
+
+#ifndef TYPE_FUNCTION
+#define TYPE_FUNCTION
+bool isStructDef(pItem src) {
+    if (src == NULL) return false;
+    if (src->field->type->kind != STRUCTURE) return false;
+    if (src->field->type->u.structure.structName) return false;
+    return true;
+}
+
 
 // Type functions
 pType newType(Kind kind, ...) {
@@ -65,13 +83,11 @@ pType copyType(pType src) {
     return p;
 }
 
-
-
 void deleteType(pType type) {
     assert(type != NULL);
     assert(type->kind == BASIC || type->kind == ARRAY ||
            type->kind == STRUCTURE || type->kind == FUNCTION);
-    pFieldList temp = NULL;
+pFieldList temp = NULL;
     // pFieldList tDelete = NULL;
     switch (type->kind) {
         case BASIC:
@@ -107,6 +123,14 @@ void deleteType(pType type) {
     }
     free(type);
 }
+
+
+
+
+#endif // !TYPE_FUNCTION
+
+#ifndef FIELD_FUNCTION
+#define FIELD_FUNCTION
 
 
 pFieldList newFieldList(char* newName, pType newType) {
@@ -169,6 +193,14 @@ void printFieldList(pFieldList fieldList) {
     }
 }
 
+
+
+
+
+#endif // !FIELD_FUNCTION
+
+#ifndef ITEM_FUNCTION
+#define ITEM_FUNCTION
 pItem newItem(int symbolDepth, pFieldList pfield) {
     pItem p = (pItem)malloc(sizeof(TableItem));
     assert(p != NULL);
@@ -184,6 +216,11 @@ void deleteItem(pItem item) {
     if (item->field != NULL) deleteFieldList(item->field);
     free(item);
 }
+
+#endif // !ITEM_FUNCTION
+
+#ifndef HASH_FUNCTION
+#define HASH_FUNCTION
 
 pHash newHash() {
     pHash p = (pHash)malloc(sizeof(HashTable));
@@ -221,6 +258,16 @@ void setHashHead(pHash hash, int index, pItem newVal) {
     assert(hash != NULL);
     hash->hashArray[index] = newVal;
 }
+
+
+
+
+#endif // !HASH_FUNCTION
+
+#ifndef TABLE_FUNCTION
+#define TABLE_FUNCTION
+
+
 
 pTable initTable() {
     pTable table = (pTable)malloc(sizeof(Table));
@@ -297,12 +344,33 @@ void deleteTableItem(pTable table, pItem item) {
 }
 
 
-bool isStructDef(pItem src) {
-    if (src == NULL) return false;
-    if (src->field->type->kind != STRUCTURE) return false;
-    if (src->field->type->u.structure.structName) return false;
-    return true;
+// for Debug
+void printTable(pTable table) {
+    printf("----------------hash_table----------------\n");
+    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+        pItem item = getHashHead(table->hash, i);
+        if (item) {
+            printf("[%d]", i);
+            while (item) {
+                printf(" -> name: %s depth: %d\n", item->field->name,
+                       item->symbolDepth);
+                printf("========FiledList========\n");
+                printFieldList(item->field);
+                printf("===========End===========\n");
+                item = item->nextHash;
+            }
+            printf("\n");
+        }
+    }
+    printf("-------------------end--------------------\n");
 }
+
+
+#endif // !TABLE_FUNCTION
+
+
+
+
 
 
 
@@ -318,5 +386,8 @@ void clearCurDepthStackList(pTable table) {
     setCurDepthStackHead(stack, NULL);
     minusStackDepth(stack);
 }
+
+
+
 
 
