@@ -1,15 +1,5 @@
 #include "semantic.h"
 
-
-
-
-#ifndef SEMANTIC_CPP
-#define SEMANTIC_cpp
-pTable tabel;
-
-
-#endif // !SEMANTIC_CPP
-
 #ifndef TYPE_FUNCTION
 #define TYPE_FUNCTION
 bool isStructDef(pItem src) {
@@ -427,8 +417,3 @@ void setCurDepthStackHead(pStack stack, pItem newVal) {
 }
 
 #endif // !STACK_FUNCTION
-
-
-
-
-
