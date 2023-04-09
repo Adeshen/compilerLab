@@ -1,9 +1,13 @@
 #include <iostream>
 #include "driver.hpp"
+#include "semantic.h"
+
 
 bool lexError=false;
 bool synError=false;
 pNode root;
+pTable table=initTable();
+
 
 int  main (int argc, char *argv[])
 {
@@ -24,8 +28,14 @@ int  main (int argc, char *argv[])
         }
     }
     drv.parse (argv[in]);      //printTreeInfo(root,0);
-    if(!lexError && !synError)
-         printTreeInfo(root,0);
+    if(!lexError && !synError){
+        
+
+        printTreeInfo(root,0);
+        traverseTree(root);
+        deleteTable(table);
+
+    }
 
 
     return res;

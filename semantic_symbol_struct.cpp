@@ -1,3 +1,10 @@
+/*
+this is the struct method implement of semantic.h
+
+
+*/
+
+
 #include "semantic.h"
 
 #ifndef TYPE_FUNCTION
@@ -366,7 +373,6 @@ void printTable(pTable table) {
     }
     printf("-------------------end--------------------\n");
 }
-
 
 
 #endif // !TABLE_FUNCTION
