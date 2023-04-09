@@ -34,6 +34,7 @@ int  main (int argc, char *argv[])
 
         printTreeInfo(root,0);
         traverseTree(root);
+        // printf("hello.world");
         // deleteTable(table);
 
     }
