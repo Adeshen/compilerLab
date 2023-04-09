@@ -5,7 +5,7 @@ this is the struct method implement of semantic.h
 */
 
 
-#include "semantic.h"
+#include "semantic_symbol_struct.h"
 
 #ifndef TYPE_FUNCTION
 #define TYPE_FUNCTION
@@ -16,6 +16,58 @@ bool isStructDef(pItem src) {
     return true;
 }
 
+
+bool checkType(pType type1, pType type2) {
+    if (type1 == NULL || type2 == NULL) return true;
+    if (type1->kind == FUNCTION || type2->kind == FUNCTION) return false;
+    if (type1->kind != type2->kind)
+        return false;
+    else {
+        assert(type1->kind == BASIC || type1->kind == ARRAY ||
+               type1->kind == STRUCTURE);
+        switch (type1->kind) {
+            case BASIC:
+                return type1->u.basic == type2->u.basic;
+            case ARRAY:
+                return checkType(type1->u.array.elem, type2->u.array.elem);
+            case STRUCTURE:
+                return !strcmp(type1->u.structure.structName,
+                               type2->u.structure.structName);
+        }
+    }
+}
+
+void printType(pType type) {
+    if (type == NULL) {
+        printf("type is NULL.\n");
+    } else {
+        printf("type kind: %d\n", type->kind);
+        switch (type->kind) {
+            case BASIC:
+                printf("type basic: %d\n", type->u.basic);
+                break;
+            case ARRAY:
+                printf("array size: %d\n", type->u.array.size);
+                printType(type->u.array.elem);
+                break;
+            case STRUCTURE:
+                if (!type->u.structure.structName)
+                    printf("struct name is NULL\n");
+                else {
+                    printf("struct name is %s\n", type->u.structure.structName);
+                }
+                printFieldList(type->u.structure.field);
+                break;
+            case FUNCTION:
+                printf("function argc is %d\n", type->u.function.argc);
+                printf("function args:\n");
+                printFieldList(type->u.function.argv);
+                printf("function return type:\n");
+                printType(type->u.function.returnType);
+                break;
+        }
+    }
+}
 
 // Type functions
 pType newType(Kind kind, ...) {

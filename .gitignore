@@ -4,3 +4,4 @@ token.cpp
 parser.hpp
 parser.cpp
 parser
+.vscode

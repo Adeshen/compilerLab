@@ -4,7 +4,7 @@ MES=design
 
 OBJS = parser.o driver.o token.o main.o semantic_symbol_struct.o semantic.o
 LLVMCONFIG = llvm-config
-CPPFLAGS =  -std=c++11 -fpermissive
+CPPFLAGS =  -std=c++11 -fpermissive   -Wall -c
 LDFLAGS =  -lpthread -ldl -lz -lncurses -rdynamic
 LIBS = ` `
 TEST_PATH=./Test
@@ -45,8 +45,12 @@ test:  parser
 	@echo ;echo
 
 	@./parser $(TEST_PATH)/$(MAIN_CASE)
-	
 
+
+seman:
+	g++ -o semantic.o semantic.cpp -c
+	g++ -o semantic_symbol_struct.o semantic_symbol_struct.cpp -c
+	g++ -o seman.o  semantic_symbol_struct.o  semantic.o
 git:
 	git add .
 	git commit -m "$(MES)"

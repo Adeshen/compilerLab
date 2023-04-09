@@ -1,5 +1,6 @@
 #include <iostream>
 #include "driver.hpp"
+#include "semantic_symbol_struct.h"
 #include "semantic.h"
 
 
@@ -33,7 +34,7 @@ int  main (int argc, char *argv[])
 
         printTreeInfo(root,0);
         traverseTree(root);
-        deleteTable(table);
+        // deleteTable(table);
 
     }
 

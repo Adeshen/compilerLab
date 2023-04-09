@@ -1,3 +1,4 @@
+// #include "semantic_symbol_struct.h"
 #include "semantic.h"
 
 
@@ -47,6 +48,28 @@ void ExtDef(pNode node) {
     
 }
 
+void ExtDecList(pNode node, pType specifier) {
+    assert(node != NULL);
+    // ExtDecList -> VarDec
+    //             | VarDec COMMA ExtDecList
+    pNode temp = node;
+    while (temp) {
+        pItem item = VarDec(temp->child, specifier);
+        if (checkTableItemConflict(table, item)) {
+            char msg[100] = {0};
+            sprintf(msg, "Redefined variable \"%s\".", item->field->name);
+            pError(REDEF_VAR, temp->lineNo, msg);
+            deleteItem(item);
+        } else {
+            addTableItem(table, item);
+        }
+        if (temp->child->next) {
+            temp = temp->next->next->child;
+        } else {
+            break;
+        }
+    }
+}
 
 
 pType Specifier(pNode node) {
@@ -144,6 +167,50 @@ pType StructSpecifier(pNode node) {
     // printType(returnType);
     return returnType;
 }
+
+pItem VarDec(pNode node, pType specifier) {
+    assert(node != NULL);
+    // VarDec -> ID
+    //         | VarDec LB INT RB
+    pNode id = node;
+    // get ID
+    while (id->child) id = id->child;
+    pItem p = newItem(table->stack->curStackDepth, newFieldList(id->val, NULL));
+    // return newItem(table->stack->curStackDepth,
+    //                newFieldList(id->val, generateVarDecType(node,
+    //                specifier)));
+
+    // VarDec -> ID
+    // printTreeInfo(node, 0);
+    if (!strcmp(node->child->name, "ID")) {
+        // printf("copy type tp %s.\n", node->child->val);
+        p->field->type = copyType(specifier);
+    }
+    // VarDec -> VarDec LB INT RB
+    else {
+        pNode varDec = node->child;
+        pType temp = specifier;
+        // printf("VarDec -> VarDec LB INT RB.\n");
+        while (varDec->next) {
+            // printTreeInfo(varDec, 0);
+            // printf("number: %s\n", varDec->next->next->val);
+            // printf("temp type: %d\n", temp->kind);
+            p->field->type =
+                newType(ARRAY, copyType(temp), atoi(varDec->next->next->val));
+            // printf("newType. newType: elem type: %d, elem size: %d.\n",
+            //        p->field->type->u.array.elem->kind,
+            //        p->field->type->u.array.size);
+            temp = p->field->type;
+            varDec = varDec->child;
+        }
+    }
+    // printf("-------test VarDec ------\n");
+    // printType(specifier);
+    // printFieldList(p->field);
+    // printf("-------test End ------\n");
+    return p;
+}
+
 
 void FunDec(pNode node, pType returnType) {
     assert(node != NULL);
