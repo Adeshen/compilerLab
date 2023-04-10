@@ -620,7 +620,7 @@ pType Exp(pNode node) {
                     !p1->u.structure.structName) {
                     //报错，对非结构体使用.运算符
                     pError(ILLEGAL_USE_DOT, t->lineNo, "Illegal use of \".\".");
-                    if (p1) deleteType(p1);
+                    // if (p1) deleteType(p1);
                 } else {
                     pNode ref_id = t->next->next;
                     pFieldList structfield = p1->u.structure.field;
@@ -632,8 +632,11 @@ pType Exp(pNode node) {
                     }
                     if (structfield == NULL) {
                         //报错，没有可以匹配的域名
-                        printf("Error type %d at Line %d: %s.\n", 14, t->lineNo,
-                               "NONEXISTFIELD");
+                        // printf("Error type %d at Line %d: %s.\n", 14, t->lineNo,
+                        //        "Non-ex");
+                        char*msg=(char*)malloc(sizeof(char)*64);
+                        sprintf(msg,"Non-existent field \"%s\".",ref_id->val);
+                        pError(NONEXISTFIELD,t->lineNo,msg);
                         ;
                     } else {
                         returnType = copyType(structfield->type);
@@ -731,6 +734,8 @@ void Args(pNode node, pItem funcInfo) {
     // printf("-----function atgs-------\n");
     // printFieldList(arg);
     // printf("---------end-------------\n");
+
+
     while (temp) {
         if (arg == NULL) {
             char msg[100] = {0};

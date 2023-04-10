@@ -32,7 +32,7 @@ int  main (int argc, char *argv[])
     if(!lexError && !synError){
         
 
-        printTreeInfo(root,0);
+        // printTreeInfo(root,0);
         traverseTree(root);
         // printf("hello.world");
         // deleteTable(table);

@@ -7,10 +7,10 @@ LLVMCONFIG = llvm-config
 CPPFLAGS =  -std=c++11 -fpermissive   -Wall -c -g
 LDFLAGS =  -lpthread -ldl -lz -lncurses -rdynamic
 LIBS = ` `
-TEST_PATH=./Test
+TEST_PATH=./Test2
 WARN_FLAG= --no-warnings
 CASE=$(find $(TEST_PATH) -name *.cmm)
-MAIN_CASE=test1.cmm
+MAIN_CASE=test15.cmm
 
 parser: $(OBJS)
 	g++ -o $@ $(OBJS)  $(LDFLAGS) $(WARN_FLAG) 

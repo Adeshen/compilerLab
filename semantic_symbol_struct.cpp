@@ -136,8 +136,10 @@ pType copyType(pType src) {
 
 void deleteType(pType type) {
     assert(type != NULL);
-    assert(type->kind == BASIC || type->kind == ARRAY ||
-           type->kind == STRUCTURE || type->kind == FUNCTION);
+    if(!(type->kind == BASIC || type->kind == ARRAY ||
+           type->kind == STRUCTURE || type->kind == FUNCTION)){
+            return ;
+    }
 pFieldList temp = NULL;
     // pFieldList tDelete = NULL;
     switch (type->kind) {
