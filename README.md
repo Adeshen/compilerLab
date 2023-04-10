@@ -212,11 +212,9 @@ static inline void pError(ErrorType type, int line, char* msg) {
 
 **test5.cmm 输出差异                                                解决**
 
-**Error type 7 at Line 4: Type mismatched for operands**
-
 **test6 常量左值                                          解决**
 
-**test9 还是 形参没有定义， 而且函数的参数没有读取到   50%   信息不全**
+**test9 还是 形参没有定义， 而且函数的参数没有读取到   50%   信息不全  解决**
 
 **test13 直接爆出内存！                  50%      访问空   解决**
 

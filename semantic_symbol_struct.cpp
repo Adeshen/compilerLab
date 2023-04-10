@@ -178,36 +178,60 @@ pFieldList temp = NULL;
 }
 
 
-char *getTypeStr(pType p){
+void *getTypeStr(pType p,char *str){
 
     assert(p->kind == BASIC || p->kind == ARRAY || p->kind == STRUCTURE ||
            p->kind == FUNCTION);
-    char * name=(char*)malloc(sizeof(char*)*64);
+    // char * name=(char*)malloc(sizeof(char*)*64);
 
     switch (p->kind) {
         case BASIC:
             // p->u.basic = src->u.basic;
+            if(p->u.basic==BasicType::FLOAT_TYPE){
+                strcat(str,"float");
+            }
+            else if(p->u.basic==BasicType::INT_TYPE){
+                strcat(str,"int");
+            }
+            else if(p->u.basic==BasicType::STR_TYPE){
+                strcat(str,"char");
+            }
+
             break;
         case ARRAY:
             // p->u.array.elem = copyType(src->u.array.elem);
             // p->u.array.size = src->u.array.size;
+            
+            getTypeStr(p->u.array.elem,str);
+            char t[20];
+            sprintf(t,"[%d]",p->u.array.size);
+            strcat(str,t);
+
             break;
         case STRUCTURE:
             // p->u.structure.structName = newString(src->u.structure.structName);
             // p->u.structure.field = copyFieldList(src->u.structure.field);
+        
+            sprintf(t,"struct %s{",p->u.structure.structName);
+            strcat(str,t);
+            getFieldListString(p->u.structure.field,str);
+            strcat(str,"}");
             break;
         case FUNCTION:
             // p->u.function.argc = src->u.function.argc;
             // p->u.function.argv = copyFieldList(src->u.function.argv);
             // p->u.function.returnType = copyType(src->u.function.returnType);
+            strcat(str,"(");
+            getFieldListString(p->u.function.argv,str);
+            strcat(str,")->");
+
+            getTypeStr(p->u.function.returnType,str);
+
             break;
     }
 }
 
-int getBasicChar(pType basic){
 
-
-}
 
 #endif // !TYPE_FUNCTION
 
@@ -275,13 +299,22 @@ void printFieldList(pFieldList fieldList) {
     }
 }
 
-// int getFieldListString(pFieldList fieldList,char *str){
-//     if (fieldList == NULL)
-//         return 0;
-//     else{
-//         strcat(str,fprintf(",%s %s",fieldList->type,fieldList->name));
-//     }
-// }
+int getFieldListString(pFieldList fieldList,char *str){
+    if (fieldList == NULL)
+        return 0;
+    else{
+        // char t[32];
+       
+        getTypeStr(fieldList->type,str);
+        strcat(str," ");
+        strcat(str,fieldList->name);
+        if(fieldList->tail!=NULL){
+            strcat(str,",");
+            getFieldListString(fieldList->tail,str);
+        }
+        return 1;
+    }
+}
 
 
 

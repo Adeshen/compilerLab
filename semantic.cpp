@@ -739,9 +739,12 @@ void Args(pNode node, pItem funcInfo) {
     while (temp) {
         if (arg == NULL) {
             char msg[100] = {0};
+            char msgs[32]={0};
+            strcat(msgs,funcInfo->field->name);
+            getTypeStr(funcInfo->field->type,msgs);
             sprintf(
                 msg, "too many arguments to function \"%s\", except %d args.",
-                funcInfo->field->name, funcInfo->field->type->u.function.argc);
+                msgs, funcInfo->field->type->u.function.argc);
             pError(FUNC_AGRC_MISMATCH, node->lineNo, msg);
             break;
         }

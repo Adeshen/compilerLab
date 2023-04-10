@@ -92,7 +92,7 @@ pType copyType(pType src);
 void deleteType(pType type);
 bool checkType(pType type1, pType type2);
 void printType(pType type);
-
+void *getTypeStr(pType p,char *str);
 
 //成员链
 pFieldList newFieldList(char* newName, pType newType);
@@ -100,7 +100,7 @@ pFieldList copyFieldList(pFieldList src);
 void deleteFieldList(pFieldList fieldList);
 void setFieldListName(pFieldList p, char* newName);
 void printFieldList(pFieldList fieldList);
-
+int getFieldListString(pFieldList fieldList,char *str);
 
 //表项
 pItem newItem(int symbolDepth, pFieldList pfield);
