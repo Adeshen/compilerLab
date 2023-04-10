@@ -1,1 +1,1 @@
-run ./Test/test3.cmm
+run ../Test/test13.cmm

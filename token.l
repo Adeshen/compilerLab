@@ -44,6 +44,7 @@ RELOP 	>|<|>=|<=|==|!=
 "struct"                 TOKEN_NODE(TOKEN_OTHER,"struct");return TSTRUCT;
 {TYPE}                   TOKEN_NODE(TOKEN_TYPE,"TYPE");return TYPE;
 "extern"                 TOKEN_NODE(TOKEN_OTHER,"EXTERN");return TEXTERN;
+{RELOP}                  {TOKEN_NODE(TOKEN_OTHER, "RELOP"); return RELOP; }
 
 [a-zA-Z_][a-zA-Z0-9_]*	          TOKEN_NODE(TOKEN_ID,"ID");return TIDENTIFIER;
 [0-9]+\.[0-9]*	                  TOKEN_NODE(TOKEN_FLOAT,"FLOAT");return TDOUBLE;
@@ -54,7 +55,7 @@ RELOP 	>|<|>=|<=|==|!=
 0[1-7][0-7]*                      TOKEN_NODE(TOKEN_INT,"INT");return TINTEGER;
 \"(\\.|[^"])*\"                   TOKEN_NODE(TOKEN_STR,"STR");return TLITERAL;
 
-"="						 TOKEN_NODE(TOKEN_OTHER,"EQUAL");return TEQUAL;
+"="						 TOKEN_NODE(TOKEN_OTHER,"ASSIGNOP");return TEQUAL;
 
 "("                      TOKEN_NODE(TOKEN_OTHER,"LP");return TLPAREN;
 ")"                      TOKEN_NODE(TOKEN_OTHER,"RP");return TRPAREN;
@@ -78,6 +79,7 @@ RELOP 	>|<|>=|<=|==|!=
 ">>"                     TOKEN_NODE(TOKEN_OTHER,"SHIFTR");return TSHIFTR;
 "<<"                     TOKEN_NODE(TOKEN_OTHER,"SHIFTL");return TSHIFTL;
 ";"                      TOKEN_NODE(TOKEN_OTHER,"SEMI");return TSEMICOLON;
+
 
 [0-7]*[9][0-7]*                              lexError=1;printf("Error type A at Line %d:  Illegal octal number “%s”\n",yylineno,yytext);return TIDENTIFIER;
 0[xX][0-9a-fA-F]*[g-zG-Z][0-9a-fA-F]*        lexError=1;printf("Error type A at Line %d:  Illegal hexadecimal number “%s”\n",yylineno,yytext);return TIDENTIFIER;

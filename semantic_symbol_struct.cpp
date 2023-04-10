@@ -176,7 +176,36 @@ pFieldList temp = NULL;
 }
 
 
+char *getTypeStr(pType p){
 
+    assert(p->kind == BASIC || p->kind == ARRAY || p->kind == STRUCTURE ||
+           p->kind == FUNCTION);
+    char * name=(char*)malloc(sizeof(char*)*64);
+
+    switch (p->kind) {
+        case BASIC:
+            // p->u.basic = src->u.basic;
+            break;
+        case ARRAY:
+            // p->u.array.elem = copyType(src->u.array.elem);
+            // p->u.array.size = src->u.array.size;
+            break;
+        case STRUCTURE:
+            // p->u.structure.structName = newString(src->u.structure.structName);
+            // p->u.structure.field = copyFieldList(src->u.structure.field);
+            break;
+        case FUNCTION:
+            // p->u.function.argc = src->u.function.argc;
+            // p->u.function.argv = copyFieldList(src->u.function.argv);
+            // p->u.function.returnType = copyType(src->u.function.returnType);
+            break;
+    }
+}
+
+int getBasicChar(pType basic){
+
+
+}
 
 #endif // !TYPE_FUNCTION
 
@@ -244,7 +273,13 @@ void printFieldList(pFieldList fieldList) {
     }
 }
 
-
+// int getFieldListString(pFieldList fieldList,char *str){
+//     if (fieldList == NULL)
+//         return 0;
+//     else{
+//         strcat(str,fprintf(",%s %s",fieldList->type,fieldList->name));
+//     }
+// }
 
 
 

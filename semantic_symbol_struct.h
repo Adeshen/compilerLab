@@ -11,11 +11,14 @@
 //用于构建符号表
 static inline unsigned int getHashCode(char* name) {
     unsigned int val = 0, i;
+    // unsigned int x;
     for (; *name; ++name) {
         val = (val << 2) + *name;
-        if (i == val & ~HASH_TABLE_SIZE)
+        if (i= (val & ~HASH_TABLE_SIZE) >= 0)
             val = (val ^ (i >> 12)) & HASH_TABLE_SIZE;
     }
+    // x= (unsigned int)HASH_TABLE_SIZE;
+    val %= (unsigned int)HASH_TABLE_SIZE;
     return val;
 }
 

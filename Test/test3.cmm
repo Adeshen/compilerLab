@@ -2,4 +2,6 @@ int main()
 {
 	int i = 9;
 	int j = 3;
+    k=5;
+
 }

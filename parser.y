@@ -128,7 +128,7 @@ extern pNode root;
     ;
 
     VarList : ParamDec TCOMMA VarList                    { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"VarList", 3, $1, $2, $3); }
-            | ParamDec                                   { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"ParamDec", 1, $1); }
+            | ParamDec                                   { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"VarList", 1, $1); }
     ;
 
     ParamDec : Specifier VarDec                          { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"ParamDec", 2, $1, $2); }
@@ -180,7 +180,7 @@ extern pNode root;
         | TIDENTIFIER TLPAREN Args TRPAREN      { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 4, $1, $2, $3, $4); }
         | TIDENTIFIER TLPAREN TRPAREN           { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 3, $1, $2, $3); }
         | Exp TLBRACKET Exp TRBRACKET   { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 4, $1, $2, $3, $4); }
-        | Exp TDOT TIDENTIFIER          { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 3, $1, $2, $3); }
+        | Exp TDOT TIDENTIFIER          { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 3, $1, $2, $3);}
         | TIDENTIFIER                   { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 1, $1); }
         | TINTEGER                      { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 1, $1); }
         | TDOUBLE                       { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"Exp", 1, $1); }
