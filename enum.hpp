@@ -19,7 +19,7 @@ typedef enum _kind { BASIC, ARRAY, STRUCTURE, FUNCTION } Kind;
 define all base type
 guarantee scalability
 */
-typedef enum _basicType { INT_TYPE, FLOAT_TYPE,STR_TYPE } BasicType;
+typedef enum _basicType { INT_TYPE=1, FLOAT_TYPE=2,STR_TYPE=3 } BasicType;
 
 typedef enum _errorType {
     UNDEF_VAR = 1,         // Undefined Variable

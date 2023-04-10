@@ -66,7 +66,6 @@ item四种类型设计：
 
 所有词法单元插入函数都遵顼类似的设计，如下面FunDec函数一样
 
-
 ### 基本流程
 
 1. 创建newItem()
@@ -130,7 +129,6 @@ void CompSt(pNode node, pType returnType) {
 
 而且也会更新作用域。
 
-
 当然除了这个会增加作用域深度之外还有一个东西会增加作用域的深度。
 
 函数的形式参数定义
@@ -167,3 +165,5 @@ void VarList(pNode node, pItem func) {
     minusStackDepth(table->stack);
 }
 ```
+
+## 错误覆盖

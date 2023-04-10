@@ -16,7 +16,7 @@ parser: $(OBJS)
 	g++ -o $@ $(OBJS)  $(LDFLAGS) $(WARN_FLAG) 
 
 gdb:parser
-	gdb ./parser 
+	gdb ./parser -x command.gdb
 # run ./Test/test3.cmm
 
 clean:
@@ -31,16 +31,14 @@ token.cpp:token.l parser.hpp
 	flex -o $@ $^ 
 
 $.o: $.cpp
-	g++ -c $(CPPFLAGS) -o $@ $<
+	g++  $(CPPFLAGS) -o $@ $< 
 
 
 build:clean  parser
 
 all: build
 
-$(CASE):
 	
-
 test:  parser 
 	@echo ;echo
 	@echo _________TEST $(MAIN_CASE) TEST_____________
@@ -49,7 +47,9 @@ test:  parser
 	@./parser $(TEST_PATH)/$(MAIN_CASE)
 
 
-
+testCode:semantic_symbol_struct.o  TestCode/semantic_test.o
+	g++ -o TestCode/semantic TestCode/semantic_test.o  semantic_symbol_struct.o
+	gdb ./TestCode/semantic
 git:
 	git add .
 	git commit -m "$(MES)"

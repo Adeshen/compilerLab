@@ -75,11 +75,13 @@ pType newType(Kind kind, ...) {
     assert(p != NULL);
     p->kind = kind;
     va_list vaList;
+
+
     assert(kind == BASIC || kind == ARRAY || kind == STRUCTURE || kind == FUNCTION);
     switch (kind) {
         case BASIC:
             va_start(vaList, 1);
-            p->u.basic = va_arg(vaList, BasicType);
+            p->u.basic =(BasicType)va_arg(vaList,int );
             break;
         case ARRAY:
             va_start(vaList, 2);

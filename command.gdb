@@ -1,0 +1,1 @@
+run ./Test/test3.cmm
