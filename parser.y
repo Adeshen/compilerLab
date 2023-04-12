@@ -92,6 +92,7 @@ extern pNode root;
     ;
     ExtDef : Specifier ExtDecList TSEMICOLON      { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"ExtDef", 3, $1, $2, $3); }
         | Specifier TSEMICOLON                    { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"ExtDef", 2, $1,$2); }
+        | Specifier FunDec TSEMICOLON             { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"ExtDef", 3, $1, $2, $3);}
         | Specifier FunDec CompSt                 { $$ = newNode(@$.first_line, NOT_A_TOKEN, (char*)"ExtDef", 3, $1, $2, $3); }
         | error TSEMICOLON                              { synError = true; }
     ;

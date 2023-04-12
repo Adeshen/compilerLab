@@ -41,8 +41,25 @@ void ExtDef(pNode node) {
 
     else if (!strcmp(secondName, "FunDec")) {
         // TODO: Specifier FunDec CompSt
-        FunDec(node->child->next, specifierType);
-        CompSt(node->child->next->next, specifierType);
+        pItem item=searchTableItem(table,node->child->next->child->val);
+        if(!strcmp(node->child->next->next->name, "SEMI")){
+            // checkTableItemConflict(table, item);
+            char msg[100];
+            sprintf(msg,"Inconsistent declaration of function \"%s\"",node->child->next->child->val);
+
+            if(item!=NULL){
+                pError(MUTI_DEC,node->child->next->child->lineNo,msg);
+            }else{
+                FunDec(node->child->next, specifierType);
+            }
+            
+        }else{
+            FunDec(node->child->next, specifierType);
+            CompSt(node->child->next->next, specifierType);
+            item=searchTableItem(table,node->child->next->child->val);
+            item->field->type->u.function.hasDefined=1;
+        }
+        
     }
     if (specifierType) deleteType(specifierType);
     
@@ -221,15 +238,20 @@ void FunDec(pNode node, pType returnType) {
                 newFieldList(node->child->val,
                              newType(FUNCTION, 0, NULL, copyType(returnType))));
 
+    int hasDefined=-1;
+    if(checkTableItemConflict(table, p)){
+        pItem temp = searchTableItem(table, node->child->val);
+        hasDefined=temp->field->type->u.function.hasDefined;
+
+    }
     // FunDec -> ID LP VarList RP
-    if (!strcmp(node->child->next->next->name, "VarList")) {
+    if (!strcmp(node->child->next->next->name, "VarList") && hasDefined==-1) {
         VarList(node->child->next->next, p);
     }
 
     // FunDec -> ID LP RP don't need process
-
     // check redefine
-    if (checkTableItemConflict(table, p)) {
+    if (checkTableItemConflict(table, p) && hasDefined==1) {
         char msg[100] = {0};
         sprintf(msg, "Redefined function \"%s\".", p->field->name);
         pError(REDEF_FUNC, node->lineNo, msg);
@@ -680,6 +702,13 @@ pType Exp(pNode node) {
             char msg[100] = {0};
             sprintf(msg, "\"i\" is not a function.", t->val);
             pError(NOT_A_FUNC, node->lineNo, msg);
+            return NULL;
+        } 
+        else if (funcInfo->field->type->u.function.hasDefined==0){
+            char msg[100] = {0};
+            sprintf(msg, "\"%s\" is declared but not be defined.", t->val);
+            pError(DEC_NOT_DEF, node->lineNo, msg);
+
             return NULL;
         }
         // Exp -> ID LP Args RP

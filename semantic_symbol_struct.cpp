@@ -98,6 +98,7 @@ pType newType(Kind kind, ...) {
             p->u.function.argc = va_arg(vaList, int);
             p->u.function.argv = va_arg(vaList, pFieldList);
             p->u.function.returnType = va_arg(vaList, pType);
+            p->u.function.hasDefined = 0;
             break;
     }
     va_end(vaList);
@@ -128,6 +129,7 @@ pType copyType(pType src) {
             p->u.function.argc = src->u.function.argc;
             p->u.function.argv = copyFieldList(src->u.function.argv);
             p->u.function.returnType = copyType(src->u.function.returnType);
+            p->u.function.hasDefined = src->u.function.hasDefined;
             break;
     }
 

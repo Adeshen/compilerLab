@@ -38,7 +38,9 @@ typedef enum _errorType {
     NONEXISTFIELD,         // Non-existentfield
     REDEF_FEILD,           // Redefined field
     DUPLICATED_NAME,       // Duplicated name
-    UNDEF_STRUCT           // Undefined structure
+    UNDEF_STRUCT,           // Undefined structure
+    DEC_NOT_DEF,           // declaration  but not defined
+    MUTI_DEC               // multiple declaration 
 } ErrorType;
 
 

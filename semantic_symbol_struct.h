@@ -50,6 +50,7 @@ typedef struct type {
             int argc;          // argument counter
             pFieldList argv;   // argument vector
             pType returnType;  // returnType
+            int hasDefined;
         } function;
     } u;
 } Type;
