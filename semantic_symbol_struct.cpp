@@ -19,12 +19,12 @@ bool isStructDef(pItem src) {
 
 bool checkType(pType type1, pType type2) {
     if (type1 == NULL || type2 == NULL) return true;
-    if (type1->kind == FUNCTION || type2->kind == FUNCTION) return false;
+    // if (type1->kind == FUNCTION || type2->kind == FUNCTION) return false;
     if (type1->kind != type2->kind)
         return false;
     else {
         assert(type1->kind == BASIC || type1->kind == ARRAY ||
-               type1->kind == STRUCTURE);
+               type1->kind == STRUCTURE || type1->kind == FUNCTION);
         switch (type1->kind) {
             case BASIC:
                 return type1->u.basic == type2->u.basic;
@@ -33,6 +33,10 @@ bool checkType(pType type1, pType type2) {
             case STRUCTURE:
                 return !strcmp(type1->u.structure.structName,
                                type2->u.structure.structName);
+            case FUNCTION:
+                return type1->u.function.argc==type2->u.function.argc
+                        && checkField(type1->u.function.argv,type2->u.function.argv)
+                        && checkType(type1->u.function.returnType,type2->u.function.returnType);
         }
     }
 }
@@ -306,7 +310,6 @@ int getFieldListString(pFieldList fieldList,char *str){
         return 0;
     else{
         // char t[32];
-       
         getTypeStr(fieldList->type,str);
         strcat(str," ");
         strcat(str,fieldList->name);
@@ -318,7 +321,16 @@ int getFieldListString(pFieldList fieldList,char *str){
     }
 }
 
-
+int checkField(pFieldList a,pFieldList b){
+    while(a!=NULL && b!=NULL){
+        if(!checkType(a->type,b->type))
+            return 0;
+        a=a->tail;b=b->tail;
+    }
+    if(a!=NULL || b!=NULL)
+        return 0;
+    return 1;
+}
 
 #endif // !FIELD_FUNCTION
 

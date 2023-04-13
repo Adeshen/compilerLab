@@ -239,10 +239,9 @@ void FunDec(pNode node, pType returnType) {
                              newType(FUNCTION, 0, NULL, copyType(returnType))));
 
     int hasDefined=-1;
+    pItem temp = searchTableItem(table, node->child->val);
     if(checkTableItemConflict(table, p)){
-        pItem temp = searchTableItem(table, node->child->val);
         hasDefined=temp->field->type->u.function.hasDefined;
-
     }
     // FunDec -> ID LP VarList RP
     if (!strcmp(node->child->next->next->name, "VarList") && hasDefined==-1) {
@@ -251,7 +250,9 @@ void FunDec(pNode node, pType returnType) {
 
     // FunDec -> ID LP RP don't need process
     // check redefine
-    if (checkTableItemConflict(table, p) && hasDefined==1) {
+    
+
+    if (hasDefined==1) {
         char msg[100] = {0};
         sprintf(msg, "Redefined function \"%s\".", p->field->name);
         pError(REDEF_FUNC, node->lineNo, msg);

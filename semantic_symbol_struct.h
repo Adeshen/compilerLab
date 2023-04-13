@@ -102,6 +102,7 @@ void deleteFieldList(pFieldList fieldList);
 void setFieldListName(pFieldList p, char* newName);
 void printFieldList(pFieldList fieldList);
 int getFieldListString(pFieldList fieldList,char *str);
+int checkField(pFieldList a,pFieldList b);
 
 //表项
 pItem newItem(int symbolDepth, pFieldList pfield);
