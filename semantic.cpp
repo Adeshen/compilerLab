@@ -6,6 +6,8 @@
 #define SEMANTIC_cpp
 extern pTable table;
 
+//to judge whether insert item 
+int _insert=1;
 
 #ifndef GLOBAL_FUNCTION
 #define GLOBAL_FUNCTION
@@ -44,15 +46,15 @@ void ExtDef(pNode node) {
         pItem item=searchTableItem(table,node->child->next->child->val);
         if(!strcmp(node->child->next->next->name, "SEMI")){
             // checkTableItemConflict(table, item);
-            char msg[100];
-            sprintf(msg,"Inconsistent declaration of function \"%s\"",node->child->next->child->val);
-
-            if(item!=NULL){
-                pError(MUTI_DEC,node->child->next->child->lineNo,msg);
-            }else{
-                FunDec(node->child->next, specifierType);
-            }
-            
+   
+            // if(item!=NULL){
+            //     char msg[100];
+            //     sprintf(msg,"Inconsistent declaration of function \"%s\"",node->child->next->child->val);
+            //     pError(MUTI_DEC,node->child->next->child->lineNo,msg);
+            // }else{
+            //     FunDec(node->child->next, specifierType);
+            // }
+            FunDec(node->child->next, specifierType);
         }else{
             FunDec(node->child->next, specifierType);
             CompSt(node->child->next->next, specifierType);
@@ -240,18 +242,27 @@ void FunDec(pNode node, pType returnType) {
 
     int hasDefined=-1;
     pItem temp = searchTableItem(table, node->child->val);
+    int tempInsert=_insert;
     if(checkTableItemConflict(table, p)){
         hasDefined=temp->field->type->u.function.hasDefined;
+        _insert=0;
     }
     // FunDec -> ID LP VarList RP
-    if (!strcmp(node->child->next->next->name, "VarList") && hasDefined==-1) {
+    if (!strcmp(node->child->next->next->name, "VarList") ) {
         VarList(node->child->next->next, p);
     }
-
+    _insert=1;
     // FunDec -> ID LP RP don't need process
     // check redefine
+    if(hasDefined==0){
+        if(!checkType(temp->field->type,p->field->type)){
+            char msg[100];
+            sprintf(msg,"Inconsistent declaration of function \"%s\"",node->child->val);
+            pError(MUTI_DEC,node->child->lineNo,msg);
+            return ;
+        }
+    }
     
-
     if (hasDefined==1) {
         char msg[100] = {0};
         sprintf(msg, "Redefined function \"%s\".", p->field->name);
@@ -259,7 +270,8 @@ void FunDec(pNode node, pType returnType) {
         deleteItem(p);
         p = NULL;
     } else {
-        addTableItem(table, p);
+        if(_insert)
+            addTableItem(table, p);
     }
 }
 
@@ -300,14 +312,15 @@ pFieldList ParamDec(pNode node) {
     pType specifierType = Specifier(node->child);
     pItem p = VarDec(node->child->next, specifierType);
     if (specifierType) deleteType(specifierType);
-    if (checkTableItemConflict(table, p)) {
+    if (_insert&&checkTableItemConflict(table, p)) {
         char msg[100] = {0};
         sprintf(msg, "Redefined variable \"%s\".", p->field->name);
         pError(REDEF_VAR, node->lineNo, msg);
         deleteItem(p);
         return NULL;
     } else {
-        addTableItem(table, p);
+        if(_insert)
+            addTableItem(table, p);
         return p->field;
     }
 }
