@@ -32,7 +32,7 @@ bool checkType(pType type1, pType type2) {
                 return checkType(type1->u.array.elem, type2->u.array.elem);
             case STRUCTURE:
                 return !strcmp(type1->u.structure.structName,
-                               type2->u.structure.structName);
+                               type2->u.structure.structName) || checkField(type1->u.structure.field,type2->u.structure.field);
             case FUNCTION:
                 return type1->u.function.argc==type2->u.function.argc
                         && checkField(type1->u.function.argv,type2->u.function.argv)
