@@ -266,3 +266,16 @@ test_o1 test_2  函数声明冲突   解决
 **如果测试test2.cmm，就改为**
 
 `make test MAIN_CASE=test2.cmm`
+
+
+
+# lab3 中间代码翻译
+
+## 需求分析
+
+
+
+
+
+
+

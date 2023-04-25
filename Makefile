@@ -38,8 +38,11 @@ build:clean  parser
 
 all: build
 
-	
-test:  parser 
+
+test_lab3:
+
+
+test_lab2:  parser 
 	@echo ;echo
 	@echo _________TEST $(MAIN_CASE) TEST_____________
 	@cat $(TEST_PATH)/$(MAIN_CASE)
@@ -50,12 +53,13 @@ test:  parser
 testCode:semantic_symbol_struct.o  TestCode/semantic_test.o
 	g++ -o TestCode/semantic TestCode/semantic_test.o  semantic_symbol_struct.o
 	gdb ./TestCode/semantic
+	
 git:
 	git add .
 	git commit -m "$(MES)"
 	git push github $(BRANCH) 
 
-.PHONY: clean  all test
+.PHONY: clean  all test_lab2 test_lab3  git  gdb
 
 
 
