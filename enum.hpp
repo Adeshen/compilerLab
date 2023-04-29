@@ -43,8 +43,37 @@ typedef enum _errorType {
     MUTI_DEC               // multiple declaration 
 } ErrorType;
 
+typedef enum _operand_kind{
+        OP_VARIABLE,
+        OP_CONSTANT,
+        OP_ADDRESS,
+        OP_LABEL,
+        OP_FUNCTION,
+        OP_RELOP,
+} OpKind;
 
 
+typedef enum _ir_kind{
+        IR_LABEL,
+        IR_FUNCTION,
+        IR_ASSIGN,
+        IR_ADD,
+        IR_SUB,
+        IR_MUL,
+        IR_DIV,
+        IR_GET_ADDR,
+        IR_READ_ADDR,
+        IR_WRITE_ADDR,
+        IR_GOTO,
+        IR_IF_GOTO,
+        IR_RETURN,
+        IR_DEC,
+        IR_ARG,
+        IR_CALL,
+        IR_PARAM,
+        IR_READ,
+        IR_WRITE,
+} IrKind;
 
 
 #endif

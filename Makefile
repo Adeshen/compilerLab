@@ -2,7 +2,7 @@ VERSION=lab2
 BRANCH=main
 MES=design 
 
-OBJS = parser.o driver.o token.o main.o semantic_symbol_struct.o semantic.o
+OBJS = parser.o driver.o token.o main.o semantic_symbol_struct.o semantic.o inter_struct.o
 LLVMCONFIG = llvm-config
 CPPFLAGS =  -std=c++11 -fpermissive   -Wall -c -g
 LDFLAGS =  -lpthread -ldl -lz -lncurses -rdynamic
