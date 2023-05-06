@@ -2,7 +2,7 @@ VERSION=lab2
 BRANCH=main
 MES=design 
 
-OBJS = parser.o driver.o token.o main.o semantic_symbol_struct.o semantic.o inter_struct.o
+OBJS = parser.o driver.o token.o main.o semantic_symbol_struct.o semantic.o inter_struct.o inter.o 
 LLVMCONFIG = llvm-config
 CPPFLAGS =  -std=c++11 -fpermissive   -Wall -c -g
 LDFLAGS =  -lpthread -ldl -lz -lncurses -rdynamic
@@ -10,7 +10,7 @@ LIBS = ` `
 TEST_PATH=./Test2
 WARN_FLAG= --no-warnings
 CASE=$(find $(TEST_PATH) -name *.cmm)
-MAIN_CASE=test15.cmm
+MAIN_CASE=test1.cmm
 
 parser: $(OBJS)
 	g++ -o $@ $(OBJS)  $(LDFLAGS) $(WARN_FLAG) 
@@ -39,8 +39,14 @@ build:clean  parser
 all: build
 
 
-test_lab3:
+test_lab3:parser 
+	@echo ;echo
+	@echo _________TEST $(MAIN_CASE) TEST_____________
+	@cat Test3/$(MAIN_CASE)
+	@echo ;echo
 
+	@./parser Test3/$(MAIN_CASE) hello.txt
+	
 
 test_lab2:  parser 
 	@echo ;echo
