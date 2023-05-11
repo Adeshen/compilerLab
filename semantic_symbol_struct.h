@@ -60,7 +60,7 @@ typedef struct fieldList {
     char* name;       // 域的名字
     pType type;       // 域的类型
     pFieldList tail;  // 下一个域
-    bool isArg;  // 实验3用，实验3中结构体参数需要传址，此处需要做特殊处理
+    bool isArg;       // 实验3用，实验3中结构体参数需要传址，此处需要做特殊处理
 } FieldList;
 
 typedef struct tableItem {
@@ -141,7 +141,10 @@ void printTable(pTable table);
 
 void traverseTree(pNode node);
 
+
+extern bool semError;
 static inline void pError(ErrorType type, int line, char* msg) {
+    semError=true;
     printf("Error type %d at Line %d: %s\n", type, line, msg);
 }
 

@@ -45,7 +45,7 @@ test_lab3:parser
 	@cat Test3/$(MAIN_CASE)
 	@echo ;echo
 
-	@./parser Test3/$(MAIN_CASE) hello.txt
+	@./parser Test3/$(MAIN_CASE) test.out
 	
 
 test_lab2:  parser 

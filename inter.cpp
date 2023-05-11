@@ -130,7 +130,7 @@ void translateExtDef(pNode node) {
     // ExtDecList不涉及中间代码生成，类型声明也不涉及，所以只需要处理FunDec和CompSt
     if (!strcmp(node->child->next->name, "FunDec")) {
         translateFunDec(node->child->next);
-        if(strcmp(node->child->next->next->name, "CompSt")){
+        if(!strcmp(node->child->next->next->name, "CompSt")){
             translateCompSt(node->child->next->next);
         }
     }
@@ -233,9 +233,10 @@ void translateVarDec(pNode node, pOperand place) {
     if (interError) return;
     // VarDec -> ID
     //         | VarDec LB INT RB
-
+    return ;
     if (!strcmp(node->child->name, "ID")) {
         pItem temp = searchTableItem(table, node->child->val);
+        
         pType type = temp->field->type;
         if (type->kind == BASIC) {
             if (place) {

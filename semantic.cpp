@@ -198,7 +198,6 @@ pItem VarDec(pNode node, pType specifier) {
     // return newItem(table->stack->curStackDepth,
     //                newFieldList(id->val, generateVarDecType(node,
     //                specifier)));
-
     // VarDec -> ID
     // printTreeInfo(node, 0);
     if (!strcmp(node->child->name, "ID")) {
@@ -339,7 +338,7 @@ void CompSt(pNode node, pType returnType) {
         StmtList(temp, returnType);
     }
     //这是唯一一个地方会清空当前深度的
-    clearCurDepthStackList(table);
+    // clearCurDepthStackList(table); //lab3 停止清楚对应的
 }
 
 void StmtList(pNode node, pType returnType) {

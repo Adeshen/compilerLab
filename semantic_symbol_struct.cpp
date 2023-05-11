@@ -410,6 +410,21 @@ pTable initTable() {
     table->hash = newHash();
     table->stack = newStack();
     table->unNamedStructNum = 0;
+
+    pItem readFun = newItem(
+        0, newFieldList(newString("read"),
+                        newType(FUNCTION, 0, NULL, newType(BASIC, INT_TYPE))));
+
+    pItem writeFun = newItem(
+        0, newFieldList(newString("write"),
+                        newType(FUNCTION, 1,
+                                newFieldList("arg1", newType(BASIC, INT_TYPE)),
+                                newType(BASIC, INT_TYPE))));
+    readFun->field->type->u.function.hasDefined=1;
+    writeFun->field->type->u.function.hasDefined=1;
+    addTableItem(table, readFun);
+    addTableItem(table, writeFun);
+
     return table;
 };
 
