@@ -273,8 +273,8 @@ test_o1 test_2  函数声明冲突   解决
 
 ## 需求分析
 
-* [ ] 设计存储中间代码的结构
-* [ ] 节点翻译函数
+* [x] 设计存储中间代码的结构
+* [x] 节点翻译函数
 * [ ] 虚拟机测试
 
 
@@ -284,6 +284,131 @@ test_o1 test_2  函数声明冲突   解决
 每条中间代码，由两部分组成。
 
 操作数+指令类型
+
+``` cpp
+typedef enum _operand_kind{
+        OP_VARIABLE,
+        OP_CONSTANT,
+        OP_ADDRESS,
+        OP_LABEL,
+        OP_FUNCTION,
+        OP_RELOP,
+} OpKind;
+
+
+typedef enum _ir_kind{
+        IR_LABEL,
+        IR_FUNCTION,
+        IR_ASSIGN,
+        IR_ADD,
+        IR_SUB,
+        IR_MUL,
+        IR_DIV,
+        IR_GET_ADDR,
+        IR_READ_ADDR,
+        IR_WRITE_ADDR,
+        IR_GOTO,
+        IR_IF_GOTO,
+        IR_RETURN,
+        IR_DEC,
+        IR_ARG,
+        IR_CALL,
+        IR_PARAM,
+        IR_READ,
+        IR_WRITE,
+} IrKind;
+
+
+typedef struct _operand {
+    OpKind kind;
+    union {
+        int value;
+        char* name;
+    } u;
+    // boolean isAddr;
+} Operand;
+
+typedef struct _interCode {
+    IrKind kind;
+    union {
+        struct {
+            pOperand op;
+        } oneOp;
+        struct {
+            pOperand right, left;
+        } assign;
+        struct {
+            pOperand result, op1, op2;
+        } binOp;
+        struct {
+            pOperand x, relop, y, z;
+        } ifGoto;
+        struct {
+            pOperand op;
+            int size;
+        } dec;
+    } u;
+} InterCode;
+
+```
+
+不同的类型对应着不同翻译方案，具体的翻译在`printInterCode`函数
+
+
+
+
+
+
+
+
+
+## 产生错误
+
+
+
+### test_o3.cmm
+
+Cannot translate: Code containsvariables of multi-dimensional array type or parameters of array type
+
+
+
+### test_o4.cmm
+
+Error type B at line 25: syntax error.
+Error type B at line 30: syntax error.
+Error type B at line 41: syntax error.
+
+
+
+### test_o5.cmm
+
+Error type B at line 12: syntax error.
+Error type B at line 86: syntax error.
+Error type B at line 142: syntax error.
+Error type B at line 215: syntax error.
+Error type B at line 241: syntax error.
+Error type B at line 263: syntax error.
+
+## 测试结果
+
+安装测试工具
+
+``` bash
+sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -57,9 +57,9 @@ void ExtDef(pNode node) {
             FunDec(node->child->next, specifierType);
         }else{
             FunDec(node->child->next, specifierType);
-            CompSt(node->child->next->next, specifierType);
             item=searchTableItem(table,node->child->next->child->val);
             item->field->type->u.function.hasDefined=1;
+            CompSt(node->child->next->next, specifierType);
         }
         
     }
