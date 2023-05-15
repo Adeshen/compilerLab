@@ -9,6 +9,7 @@ t7 := *o2
 t1 := t6 + t7
 RETURN t1
 FUNCTION main :
+DEC op 8
 t9 := &op
 o1 := t9 + #0
 *o1 := #1

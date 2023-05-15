@@ -71,8 +71,8 @@ RELOP 	>|<|>=|<=|==|!=
 "-"                      TOKEN_NODE(TOKEN_OTHER,"MINUS");return TMINUS;
 "*"                      TOKEN_NODE(TOKEN_OTHER,"STAR");return TSTAR;
 "/"                      TOKEN_NODE(TOKEN_OTHER,"DIV");return TDIV;
-"&"                      TOKEN_NODE(TOKEN_OTHER,"AND");return TAND;
-"|"                      TOKEN_NODE(TOKEN_OTHER,"OR");return TOR;
+"&&"                      TOKEN_NODE(TOKEN_OTHER,"AND");return TAND;
+"||"                      TOKEN_NODE(TOKEN_OTHER,"OR");return TOR;
 "!"                      TOKEN_NODE(TOKEN_OTHER,"NOT");return TNOT;
 "^"                      TOKEN_NODE(TOKEN_OTHER,"XOR");return TXOR;
 "%"                      TOKEN_NODE(TOKEN_OTHER,"MOD");return TMOD;

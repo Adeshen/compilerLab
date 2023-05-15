@@ -372,6 +372,18 @@ Cannot translate: Code containsvariables of multi-dimensional array type or para
 
 
 
+一开始并未处理多维数组的情况，
+
+多为数组共出现在3个地方，
+
+1.声明时
+
+2.表达式中
+
+3.传递参数中
+
+
+
 ### test_o4.cmm
 
 Error type B at line 25: syntax error.
@@ -380,14 +392,11 @@ Error type B at line 41: syntax error.
 
 
 
-### test_o5.cmm
+发现是词法分析中，没有单独识别 "&&"  "||"
 
-Error type B at line 12: syntax error.
-Error type B at line 86: syntax error.
-Error type B at line 142: syntax error.
-Error type B at line 215: syntax error.
-Error type B at line 241: syntax error.
-Error type B at line 263: syntax error.
+只识别"|"  "&"
+
+### test_o5.cmm
 
 ## 测试结果
 

@@ -25,9 +25,10 @@ int func2(int p) {
     if ((p >= i) && (p < j)) {
       return idx;
     }
+
     idx = idx + 1;
   }
-  return -1;
+  return 1;
 }
 
 int func3(struct S1 pp1, struct S1 pp2) {

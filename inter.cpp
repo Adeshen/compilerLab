@@ -233,7 +233,7 @@ void translateVarDec(pNode node, pOperand place) {
     if (interError) return;
     // VarDec -> ID
     //         | VarDec LB INT RB
-    return ;
+    // return ;
     if (!strcmp(node->child->name, "ID")) {
         pItem temp = searchTableItem(table, node->child->val);
         
@@ -247,12 +247,18 @@ void translateVarDec(pNode node, pOperand place) {
         } else if (type->kind == ARRAY) {
             // 不需要完成高维数组情况
             if (type->u.array.elem->kind == ARRAY) {
-                interError = true;
-                printf(
-                    "Cannot translate: Code containsvariables of "
-                    "multi-dimensional array type or parameters of array "
-                    "type.\n");
-                return;
+                // interError = true;
+                // printf(
+                //     "Cannot translate: Code containsvariables of "
+                //     "multi-dimensional array type or parameters of array "
+                //     "type.\n");
+                // return;
+                genInterCode(
+                    IR_DEC,
+                    newOperand(OP_VARIABLE,newString(temp->field->name)),
+                    getSize(type)
+                );
+
             } else {
                 genInterCode(
                     IR_DEC,
@@ -439,9 +445,11 @@ void translateExp(pNode node, pOperand place) {
                     interError = true;
                     printf(
                         "Cannot translate: Code containsvariables of "
-                        "multi-dimensional array type or parameters of array "
+                        "multi-dimensional array type or parameters of array when used "
                         "type.\n");
                     return;
+
+
                 } else {
                     pOperand idx = newTemp();
                     translateExp(node->child->next->next, idx);
@@ -716,7 +724,7 @@ void translateArgs(pNode node, pArgList argList) {
             printf(
                 "Cannot translate: Code containsvariables of "
                 "multi-dimensional array type or parameters of array "
-                "type.\n");
+                "type when arg.\n");
             return;
         }
     }
