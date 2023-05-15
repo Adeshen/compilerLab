@@ -1,12 +1,14 @@
 FUNCTION add :
 PARAM a
 PARAM b
-t1 := a + b
+t2 := *a
+t3 := *b
+t1 := t2 + t3
 RETURN t1
 FUNCTION main :
 i := #1
 j := #2
 ARG i
 ARG j
-t2 := CALL add
-n := t2
+t4 := CALL add
+n := t4

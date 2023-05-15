@@ -491,6 +491,7 @@ void translateExp(pNode node, pOperand place) {
                         // printf("非结构体数组访问\n");
                         target = newTemp();
                         genInterCode(IR_GET_ADDR, target, base);
+                       
                     } else {
                         // printf("结构体数组访问\n");
                         target = base;
@@ -521,6 +522,7 @@ void translateExp(pNode node, pOperand place) {
                         // printf("非结构体数组访问\n");
                         target = newTemp();
                         genInterCode(IR_GET_ADDR, target, base);
+                        
                     } else {
                         // printf("结构体数组访问\n");
                         target = base;
@@ -529,6 +531,8 @@ void translateExp(pNode node, pOperand place) {
                     place->kind = OP_ADDRESS;
                     interCodeList->lastArrayName = base->u.name;
                 }
+
+
             }
             // Exp -> Exp DOT ID
             else {
@@ -664,7 +668,7 @@ void translateExp(pNode node, pOperand place) {
         pItem item = searchTableItem(table, node->child->val);
         // 根据讲义，因为结构体不允许赋值，结构体做形参时是传址的方式
         interCodeList->tempVarNum--;
-        if (item->field->isArg && item->field->type->kind == STRUCTURE) {
+        if (item->field->isArg) {
             setOperand(place, OP_ADDRESS, (void*)newString(node->child->val));
             // place->isAddr = TRUE;
         }

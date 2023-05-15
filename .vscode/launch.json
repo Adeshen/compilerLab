@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "/mnt/d/SUSYstudy/Grade3-2/compiler_theome/lab3/mycode/parser",
-            "args": ["Test3/test_o1.cmm","test.out"],
+            "args": ["Test3/test_o2.cmm","test.out"],
             "stopAtEntry": false,
             "miDebuggerArgs": "",
             "cwd": "/mnt/d/SUSYstudy/Grade3-2/compiler_theome/lab3/mycode",
