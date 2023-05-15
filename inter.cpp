@@ -32,11 +32,11 @@ void genInterCode(int kind, ...) {
         case IR_WRITE:
             va_start(vaList, 1);
             op1 = va_arg(vaList, pOperand);
-            if (op1->kind == OP_ADDRESS) {
-                temp = newTemp();
-                genInterCode(IR_READ_ADDR, temp, op1);
-                op1 = temp;
-            }
+            // if (op1->kind == OP_ADDRESS) {
+            //     temp = newTemp();
+            //     genInterCode(IR_READ_ADDR, temp, op1);
+            //     op1 = temp;
+            // }
             newCode = newInterCodes(newInterCode(kind, op1));
             addInterCode(interCodeList, newCode);
             break;
@@ -624,9 +624,12 @@ void translateExp(pNode node, pOperand place) {
                             genInterCode(IR_GET_ADDR, varTemp, argTemp->op);
                             pOperand varTempCopy =
                                 newOperand(OP_ADDRESS, varTemp->u.name);
-                            // varTempCopy->isAddr = TRUE;
+                        
                             genInterCode(IR_ARG, varTempCopy);
+                        }else{
+                            genInterCode(IR_ARG, argTemp->op);
                         }
+                        
                     }
                     // 一般参数直接传值
                     else {

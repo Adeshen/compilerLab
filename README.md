@@ -462,6 +462,10 @@ pOperand newTemp() {
 
 
 
+### test2.cmm  function 参数传入时没有添加ARG
+
+
+
 ### test_o2.cmm   while 无法识别
 
 原来是词法识别时，while语句写错了名字，协程THILE
