@@ -250,7 +250,7 @@ void translateVarDec(pNode node, pOperand place) {
                 // interError = true;
                 // printf(
                 //     "Cannot translate: Code containsvariables of "
-                //     "multi-dimensional array type or parameters of array "
+                //     "multi-dimensional array type or parameters of array when declaring"
                 //     "type.\n");
                 // return;
                 genInterCode(
@@ -440,16 +440,61 @@ void translateExp(pNode node, pOperand place) {
             if (!strcmp(node->child->next->name, "LB")) {
                 //数组
                 if (node->child->child->next &&
-                    !strcmp(node->child->child->next->name, "LB")) {
+                    !strcmp(node->child->child->next->name, "LB") ) {
                     //多维数组，报错
-                    interError = true;
-                    printf(
-                        "Cannot translate: Code containsvariables of "
-                        "multi-dimensional array type or parameters of array when used "
-                        "type.\n");
-                    return;
+                    // interError = true;
+                    // printf(
+                    //     "Cannot translate: Code containsvariables of "
+                    //     "multi-dimensional array type or parameters of array "
+                    //     "type when used in expression.\n");
+                    // return;
 
 
+                    //1.得知偏移数据,源于每一层循环
+                    //2.直接使用循环
+
+
+                    pNode curNode=node;
+                    
+                    pOperand idxs[100];
+                    int top=0;
+                    
+                    while(strcmp(curNode->child->name,"ID")){
+                       
+                        idxs[top]=newTemp();
+                        translateExp(curNode->child->next->next, idxs[top]);
+                        curNode=curNode->child;
+                        ++top;
+                    }
+                    pItem item = searchTableItem(table, curNode->child->val);
+                    pOperand base = newTemp();
+                    translateExp(curNode, base);
+
+                    pType curType = item->field->type;
+                    pOperand offset = newTemp();
+                    pOperand low_offset = newTemp();
+                    pOperand width;
+                    pOperand target;
+                    while(top>0){
+                        top--;
+                        width = newOperand(
+                            OP_CONSTANT, getSize(curType->u.array.elem));
+                        genInterCode(IR_MUL, low_offset, idxs[top], width);
+                        genInterCode(IR_ADD, offset, offset, low_offset);
+                        curType=curType->u.array.elem;
+                       
+                    }
+                    if (base->kind == OP_VARIABLE) {
+                        // printf("非结构体数组访问\n");
+                        target = newTemp();
+                        genInterCode(IR_GET_ADDR, target, base);
+                    } else {
+                        // printf("结构体数组访问\n");
+                        target = base;
+                    }
+                    genInterCode(IR_ADD, place, target, offset);
+                    place->kind = OP_ADDRESS;
+                    interCodeList->lastArrayName = base->u.name;
                 } else {
                     pOperand idx = newTemp();
                     translateExp(node->child->next->next, idx);
@@ -717,17 +762,17 @@ void translateArgs(pNode node, pArgList argList) {
     pArg temp = newArg(newTemp());
     translateExp(node->child, temp->op);
 
-    if (temp->op->kind == OP_VARIABLE) {
-        pItem item = searchTableItem(table, temp->op->u.name);
-        if (item && item->field->type->kind == ARRAY) {
-            interError = true;
-            printf(
-                "Cannot translate: Code containsvariables of "
-                "multi-dimensional array type or parameters of array "
-                "type when arg.\n");
-            return;
-        }
-    }
+    // if (temp->op->kind == OP_VARIABLE) {
+    //     pItem item = searchTableItem(table, temp->op->u.name);
+    //     if (item && item->field->type->kind == ARRAY) {
+    //         interError = true;
+    //         printf(
+    //             "Cannot translate: Code containsvariables of "
+    //             "multi-dimensional array type or parameters of array "
+    //             "type when arg in function.\n");
+    //         return;
+    //     }
+    // }
     addArg(argList, temp);
 
     // Args -> Exp COMMA Args

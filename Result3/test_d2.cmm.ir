@@ -1,0 +1,9 @@
+FUNCTION main :
+DEC arr 40
+t3 := #0 * #20
+t2 := t2 + t3
+t3 := #3 * #4
+t2 := t2 + t3
+t4 := &arr
+t1 := t4 + t2
+*t1 := #1

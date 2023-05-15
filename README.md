@@ -356,6 +356,35 @@ typedef struct _interCode {
 
 
 
+## 翻译过程
+
+翻译的整体过程过于复杂，我以exp这个最为齐全的概念进行举例
+
+
+
+代码基本数据从何而来？
+
+代码基本数据如何处理？
+
+代码最终结果如何转化
+
+
+
+``` cpp
+pOperand newTemp() {
+    // printf("newTemp() tempVal:%d\n", interCodeList->tempVarNum);
+    char tName[10] = {0};
+    sprintf(tName, "t%d", interCodeList->tempVarNum);
+    interCodeList->tempVarNum++;
+    pOperand temp = newOperand(OP_VARIABLE, newString(tName));
+    return temp;
+}
+```
+
+
+
+
+
 
 
 
