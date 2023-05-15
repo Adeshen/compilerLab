@@ -40,7 +40,7 @@ RELOP 	>|<|>=|<=|==|!=
 "else"                   TOKEN_NODE(TOKEN_OTHER,"ELSE");return TELSE;
 "return"                 TOKEN_NODE(TOKEN_OTHER,"RETURN");return TRETURN;
 "for"                    TOKEN_NODE(TOKEN_OTHER,"RETURN");return TFOR;
-"while"                  TOKEN_NODE(TOKEN_OTHER,"THILE");return TWHILE;
+"while"                  TOKEN_NODE(TOKEN_OTHER,"WHILE");return TWHILE;
 "struct"                 TOKEN_NODE(TOKEN_OTHER,"struct");return TSTRUCT;
 {TYPE}                   TOKEN_NODE(TOKEN_TYPE,"TYPE");return TYPE;
 "extern"                 TOKEN_NODE(TOKEN_OTHER,"EXTERN");return TEXTERN;

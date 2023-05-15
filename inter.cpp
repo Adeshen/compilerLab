@@ -451,14 +451,15 @@ void translateExp(pNode node, pOperand place) {
 
 
                     //1.得知偏移数据,源于每一层循环
-                    //2.直接使用循环
+                    //2.直接使用循环, 找到当中
 
 
-                    pNode curNode=node;
-                    
+                    pNode curNode=node;   
                     pOperand idxs[100];
                     int top=0;
                     
+                    //  循环找到 数组名字，并在各层 中找到 [idx],并存储在idxs数组中
+                    //   例如arr[id0][id1][id2]
                     while(strcmp(curNode->child->name,"ID")){
                        
                         idxs[top]=newTemp();
@@ -466,6 +467,7 @@ void translateExp(pNode node, pOperand place) {
                         curNode=curNode->child;
                         ++top;
                     }
+
                     pItem item = searchTableItem(table, curNode->child->val);
                     pOperand base = newTemp();
                     translateExp(curNode, base);
@@ -475,6 +477,7 @@ void translateExp(pNode node, pOperand place) {
                     pOperand low_offset = newTemp();
                     pOperand width;
                     pOperand target;
+                    //根据名字循环计算，每一层的偏移量，当层的偏移量存储在low_offset, 最终总的偏移存储在offset中。
                     while(top>0){
                         top--;
                         width = newOperand(
@@ -492,6 +495,7 @@ void translateExp(pNode node, pOperand place) {
                         // printf("结构体数组访问\n");
                         target = base;
                     }
+                    //将基地址和偏移量相加得到最终地址
                     genInterCode(IR_ADD, place, target, offset);
                     place->kind = OP_ADDRESS;
                     interCodeList->lastArrayName = base->u.name;

@@ -9,11 +9,17 @@ int main()
     int r[2][2];
     int i = 0, j = 0;
 
-    r[0][i] = add(op);
-
     while (i < 2)
     {
-
+        while (j < 2)
+        {
+            op[j] = i + j;
+            j = j + 1;
+        }
+        r[0][i] = add(op);
+        write(r[0][i]);
+        i = i + 1;
+        j = 0;
     }
     return 0;
 }

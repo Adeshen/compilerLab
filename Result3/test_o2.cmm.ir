@@ -23,4 +23,42 @@ t12 := t12 + t13
 t14 := &r
 t11 := t14 + t12
 *t11 := t10
+LABEL label1 :
+IF i < #2 GOTO label2
+GOTO label3
+LABEL label2 :
+LABEL label4 :
+IF j < #2 GOTO label5
+GOTO label6
+LABEL label5 :
+t15 := i + j
+t17 := j * #4
+t18 := &op
+t16 := t18 + t17
+*t16 := t15
+t19 := j + #1
+j := t19
+GOTO label4
+LABEL label6 :
+t20 := CALL add
+t23 := #0 * #8
+t22 := t22 + t23
+t23 := i * #4
+t22 := t22 + t23
+t24 := &r
+t21 := t24 + t22
+*t21 := t20
+t27 := #0 * #8
+t26 := t26 + t27
+t27 := i * #4
+t26 := t26 + t27
+t28 := &r
+t25 := t28 + t26
+t29 := *t25
+WRITE t29
+t30 := i + #1
+i := t30
+j := #0
+GOTO label1
+LABEL label3 :
 RETURN #0

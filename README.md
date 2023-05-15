@@ -356,9 +356,9 @@ typedef struct _interCode {
 
 
 
-## 翻译过程
+## 翻译过程举例——多维数据进行距离
 
-翻译的整体过程过于复杂，我以exp这个最为齐全的概念进行举例
+翻译的整体过程过于复杂，我以exp  这个最为齐全的概念进行举例
 
 
 
@@ -366,7 +366,9 @@ typedef struct _interCode {
 
 代码基本数据如何处理？
 
-代码最终结果如何转化
+代码最终结果如何转化？
+
+
 
 
 
@@ -383,6 +385,71 @@ pOperand newTemp() {
 
 
 
+``` cpp
+        // 数组和结构体访问
+        else {
+            // Exp -> Exp LB Exp RB
+            if (!strcmp(node->child->next->name, "LB")) {
+                //数组
+                if (node->child->child->next &&
+                    !strcmp(node->child->child->next->name, "LB") ) {
+                    //多维数组，报错
+                    // interError = true;
+                    // printf(
+                    //     "Cannot translate: Code containsvariables of "
+                    //     "multi-dimensional array type or parameters of array "
+                    //     "type when used in expression.\n");
+                    // return;
+
+
+                    pNode curNode=node;   
+                    pOperand idxs[100];
+                    int top=0;
+                    
+                    //  循环找到 数组名字，并在各层 中找到 [idx],并存储在idxs数组中
+     				//   例如arr[id0][id1][id2]
+                    while(strcmp(curNode->child->name,"ID")){
+                       
+                        idxs[top]=newTemp();
+                        translateExp(curNode->child->next->next, idxs[top]);
+                        curNode=curNode->child;
+                        ++top;
+                    }
+
+                    pItem item = searchTableItem(table, curNode->child->val);
+                    pOperand base = newTemp();
+                    translateExp(curNode, base);
+
+                    pType curType = item->field->type;
+                    pOperand offset = newTemp();
+                    pOperand low_offset = newTemp();
+                    pOperand width;
+                    pOperand target;
+                    //根据名字循环计算，每一层的偏移量，当层的偏移量存储在low_offset, 最终总的偏移存储在offset中。
+                    while(top>0){
+                        top--;
+                        width = newOperand(
+                            OP_CONSTANT, getSize(curType->u.array.elem));
+                        genInterCode(IR_MUL, low_offset, idxs[top], width);
+                        genInterCode(IR_ADD, offset, offset, low_offset);
+                        curType=curType->u.array.elem;
+                       
+                    }
+                    if (base->kind == OP_VARIABLE) {
+                        // printf("非结构体数组访问\n");
+                        target = newTemp();
+                        genInterCode(IR_GET_ADDR, target, base);
+                    } else {
+                        // printf("结构体数组访问\n");
+                        target = base;
+                    }
+                    //将基地址和偏移量相加得到最终地址
+                    genInterCode(IR_ADD, place, target, offset);
+                    place->kind = OP_ADDRESS;
+                    interCodeList->lastArrayName = base->u.name;
+                }
+```
+
 
 
 
@@ -395,7 +462,15 @@ pOperand newTemp() {
 
 
 
-### test_o3.cmm
+### test_o2.cmm   while 无法识别
+
+原来是词法识别时，while语句写错了名字，协程THILE
+
+
+
+
+
+### test_o3.cmm  多维数组无法识别，已经修复
 
 Cannot translate: Code containsvariables of multi-dimensional array type or parameters of array type
 
