@@ -9,7 +9,7 @@ LDFLAGS =  -lpthread -ldl -lz -lncurses -rdynamic
 LIBS = ` `
 TEST_PATH=./Test2
 WARN_FLAG= --no-warnings
-CASE=$(find $(TEST_PATH) -name *.cmm)
+CASE=test1.cmm test2.cmm test_d1.cmm test_d2.cmm test_o1.cmm test_o2.cmm test_o3.cmm test_o4.cmm test_o5.cmm
 MAIN_CASE=test1.cmm
 
 parser: $(OBJS)
@@ -46,6 +46,9 @@ test_lab3:parser
 	@echo ;echo
 
 	@./parser Test3/$(MAIN_CASE) Result3/$(MAIN_CASE).ir
+	
+test_lab3_all:parser
+	$(foreach var,$(CASE),echo $(var);./parser Test3/$(var) Result3/$(var).ir;)
 	
 
 test_lab2:  parser 

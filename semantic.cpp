@@ -320,6 +320,7 @@ pFieldList ParamDec(pNode node) {
     } else {
         if(_insert)
             addTableItem(table, p);
+        p->field->isArg = true;
         return p->field;
     }
 }

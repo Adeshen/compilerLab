@@ -7,6 +7,7 @@ t1 := a - t2
 RETURN t1
 FUNCTION do_work :
 PARAM n
+ARG n
 ARG #5
 t4 := CALL mod
 n := t4
@@ -47,111 +48,212 @@ t32 := x1 + x2
 t31 := t32 + x3
 RETURN t31
 FUNCTION main :
-t33 := #2
-t34 := #5
-t35 := #10
-t39 := t2 * t3
-t40 := #100 / #5
-t38 := t39 - t40
-t37 := #3 * t38
-t36 := t37
-t44 := t1 * t2
-t48 := t2 * t3
-t47 := t48 / #32
-t46 := t1 * t47
-t45 := t46 + #100
-t43 := t44 * t45
-t42 := #42 - t43
-t41 := t42
-t58 := #5 - #10
-t61 := t1 * t2
-t60 := t61 * #3
-t59 := #0 - t60
-t57 := t58 - t59
-t62 := t1 * t2
-t56 := t57 - t62
-t63 := t1 * t2
-t55 := t56 - t63
-t54 := t55 + #3
-t53 := t54 + #2
-t52 := t53 + #1
-t51 := #4 * t52
-t50 := #3 * t51
-t49 := t50
-t64 := #0
-t65 := #0
-t67 := t1 * t2
-t66 := t67
+t1 := #2
+t2 := #5
+t3 := #10
+t35 := t2 * t3
+t36 := #100 / #5
+t34 := t35 - t36
+t33 := #3 * t34
+i := t33
+t39 := t1 * t2
+t43 := t2 * t3
+t42 := t43 / #32
+t41 := t1 * t42
+t40 := t41 + #100
+t38 := t39 * t40
+t37 := #42 - t38
+j := t37
+t52 := #5 - #10
+t55 := t1 * t2
+t54 := t55 * #3
+t53 := #0 - t54
+t51 := t52 - t53
+t56 := t1 * t2
+t50 := t51 - t56
+t57 := t1 * t2
+t49 := t50 - t57
+t48 := t49 + #3
+t47 := t48 + #2
+t46 := t47 + #1
+t45 := #4 * t46
+t44 := #3 * t45
+k := t44
 cnt := #0
+sum := #0
+t58 := t1 * t2
+len := t58
+DEC array 40
+DEC brray 40
+LABEL label1 :
+IF cnt < k GOTO label2
+GOTO label3
+LABEL label2 :
+t59 := sum + #1
+sum := t59
+ARG cnt
+ARG len
+t61 := CALL mod
+t62 := t61 * #4
+t63 := &array
+t60 := t63 + t62
+*t60 := i
+t64 := i + #1
+i := t64
+t65 := cnt + #1
+cnt := t65
+GOTO label1
+LABEL label3 :
 cnt := #0
-t71 := #0 * #4
-t72 := &array
-t70 := t72 + t71
-t73 := *t70
-t69 := j + t73
-t75 := #1 * #4
-t76 := &array
-t74 := t76 + t75
-t77 := *t74
-t68 := t69 + t77
-j := t68
-t81 := #0 * #4
-t82 := &array
-t80 := t82 + t81
-t83 := *t80
-t79 := j + t83
-t85 := #1 * #4
-t86 := &array
-t84 := t86 + t85
-t87 := *t84
-t78 := t79 + t87
-j := t78
-t91 := #0 * #4
-t92 := &array
-t90 := t92 + t91
-t93 := *t90
-t89 := j + t93
-t95 := #1 * #4
-t96 := &array
-t94 := t96 + t95
-t97 := *t94
-t88 := t89 + t97
-j := t88
-t101 := #0 * #4
-t102 := &array
-t100 := t102 + t101
-t103 := *t100
-t99 := j + t103
-t105 := #1 * #4
-t106 := &array
-t104 := t106 + t105
-t107 := *t104
-t98 := t99 + t107
-j := t98
+LABEL label4 :
+IF cnt < #100 GOTO label5
+GOTO label6
+LABEL label5 :
+ARG cnt
+ARG len
+t67 := CALL mod
+t68 := t67 * #4
+t69 := &brray
+t66 := t69 + t68
+*t66 := i
+t70 := i + #1
+i := t70
+t71 := cnt + #1
+cnt := t71
+GOTO label4
+LABEL label6 :
+cnt := #0
+LABEL label7 :
+ARG #10
+t73 := CALL do_work
+ARG t73
+ARG #30
+t73 := CALL mod
+IF cnt < t73 GOTO label8
+GOTO label9
+LABEL label8 :
+ARG cnt
+ARG len
+t75 := CALL mod
+t76 := t75 * #4
+t77 := &array
+t74 := t77 + t76
+j := *t74
+t80 := #0 - #1
+ARG j
+t82 := CALL do_work
+t81 := cnt + t82
+t79 := t80 * t81
+t78 := sum + t79
+sum := t78
+t84 := #2 * cnt
+t83 := j + t84
+j := t83
+t86 := #2 * cnt
+t85 := j + t86
+j := t85
+t88 := #2 * cnt
+t87 := j + t88
+j := t87
+ARG #10
+t91 := CALL do_work
+ARG t91
+ARG #10
+t89 := CALL mod
+ARG j
+t92 := CALL do_work
+ARG t92
+ARG #10
+t90 := CALL mod
+IF t89 == t90 GOTO label10
+GOTO label11
+LABEL label10 :
+ARG j
+ARG #10
+t93 := CALL mod
+j := t93
+GOTO label12
+LABEL label11 :
+ARG j
+ARG #20
+t94 := CALL mod
+j := t94
+LABEL label12 :
+t95 := j * j
+ARG cnt
+ARG len
+t97 := CALL mod
+t98 := t97 * #4
+t99 := &array
+t96 := t99 + t98
+*t96 := t95
+t100 := cnt + #1
+cnt := t100
+GOTO label7
+LABEL label9 :
+t104 := #0 * #4
+t105 := &array
+t103 := t105 + t104
+t106 := *t103
+t102 := j + t106
+t108 := #1 * #4
+t109 := &array
+t107 := t109 + t108
+t110 := *t107
+t101 := t102 + t110
+j := t101
+t114 := #0 * #4
+t115 := &array
+t113 := t115 + t114
+t116 := *t113
+t112 := j + t116
+t118 := #1 * #4
+t119 := &array
+t117 := t119 + t118
+t120 := *t117
+t111 := t112 + t120
+j := t111
+t124 := #0 * #4
+t125 := &array
+t123 := t125 + t124
+t126 := *t123
+t122 := j + t126
+t128 := #1 * #4
+t129 := &array
+t127 := t129 + t128
+t130 := *t127
+t121 := t122 + t130
+j := t121
+t134 := #0 * #4
+t135 := &array
+t133 := t135 + t134
+t136 := *t133
+t132 := j + t136
+t138 := #1 * #4
+t139 := &array
+t137 := t139 + t138
+t140 := *t137
+t131 := t132 + t140
+j := t131
 WRITE j
-t109 := #0 * #4
-t110 := &array
-t108 := t110 + t109
-t111 := *t108
-WRITE t111
-t113 := #1 * #4
-t114 := &array
-t112 := t114 + t113
-t115 := *t112
-WRITE t115
-t117 := #2 * #4
-t118 := &array
-t116 := t118 + t117
-t119 := *t116
-WRITE t119
-t121 := #3 * #4
-t122 := &array
-t120 := t122 + t121
-t123 := *t120
-WRITE t123
-t125 := #4 * #4
-t126 := &array
-t124 := t126 + t125
-t127 := *t124
-WRITE t127
+t142 := #0 * #4
+t143 := &array
+t141 := t143 + t142
+WRITE t141
+t145 := #1 * #4
+t146 := &array
+t144 := t146 + t145
+WRITE t144
+t148 := #2 * #4
+t149 := &array
+t147 := t149 + t148
+WRITE t147
+t151 := #3 * #4
+t152 := &array
+t150 := t152 + t151
+WRITE t150
+t154 := #4 * #4
+t155 := &array
+t153 := t155 + t154
+WRITE t153
 RETURN #0

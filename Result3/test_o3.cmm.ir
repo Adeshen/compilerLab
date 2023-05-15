@@ -1,0 +1,116 @@
+FUNCTION func1 :
+PARAM a
+idx := #0
+len := #2
+m := #0
+LABEL label1 :
+IF idx < len GOTO label2
+GOTO label3
+LABEL label2 :
+t3 := idx * #4
+t4 := &a
+t1 := t4 + t3
+t4 := *t1
+IF t4 > m GOTO label4
+GOTO label5
+LABEL label4 :
+t6 := idx * #4
+t7 := &a
+t5 := t7 + t6
+m := *t5
+LABEL label5 :
+t8 := idx + #1
+idx := t8
+GOTO label1
+LABEL label3 :
+RETURN m
+FUNCTION func2 :
+PARAM p1
+PARAM p2
+t9 := p1 / p2
+t1 := t9
+t10 := t1 * p2
+t2 := t10
+t11 := p1 - t2
+t3 := t11
+RETURN t3
+FUNCTION main :
+arr_len := #2
+DEC arr 16
+DEC sum_arr 8
+idx1 := #0
+idx2 := #0
+LABEL label6 :
+IF idx1 < arr_len GOTO label7
+GOTO label8
+LABEL label7 :
+idx2 := #0
+LABEL label9 :
+IF idx2 < arr_len GOTO label10
+GOTO label11
+LABEL label10 :
+t13 := idx1 + idx2
+ARG t13
+ARG arr_len
+t12 := CALL func2
+t16 := idx1 * #8
+t15 := t15 + t16
+t16 := idx2 * #4
+t15 := t15 + t16
+t17 := &arr
+t14 := t17 + t15
+*t14 := t12
+t18 := idx2 + #1
+idx2 := t18
+GOTO label9
+LABEL label11 :
+t21 := idx1 * #8
+t22 := &arr
+t20 := t22 + t21
+ARG t20
+t19 := CALL func1
+t24 := idx1 * #4
+t25 := &sum_arr
+t23 := t25 + t24
+*t23 := t19
+t26 := idx1 + #1
+idx1 := t26
+GOTO label6
+LABEL label8 :
+t29 := #0 * #8
+t28 := t28 + t29
+t29 := #0 * #4
+t28 := t28 + t29
+t30 := &arr
+t27 := t30 + t28
+WRITE t27
+t33 := #0 * #8
+t32 := t32 + t33
+t33 := #1 * #4
+t32 := t32 + t33
+t34 := &arr
+t31 := t34 + t32
+WRITE t31
+t37 := #1 * #8
+t36 := t36 + t37
+t37 := #0 * #4
+t36 := t36 + t37
+t38 := &arr
+t35 := t38 + t36
+WRITE t35
+t41 := #1 * #8
+t40 := t40 + t41
+t41 := #1 * #4
+t40 := t40 + t41
+t42 := &arr
+t39 := t42 + t40
+WRITE t39
+t44 := #0 * #4
+t45 := &sum_arr
+t43 := t45 + t44
+WRITE t43
+t47 := #1 * #4
+t48 := &sum_arr
+t46 := t48 + t47
+WRITE t46
+RETURN #0

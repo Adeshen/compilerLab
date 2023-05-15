@@ -466,6 +466,14 @@ pOperand newTemp() {
 
 
 
+
+
+### test_o1.cmm  没有区分函数入参的结构体与函数内声明的结构体
+
+ 
+
+
+
 ### test_o2.cmm   while 无法识别
 
 原来是词法识别时，while语句写错了名字，协程THILE
