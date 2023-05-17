@@ -245,7 +245,7 @@ void translateVarDec(pNode node, pOperand place) {
                            (void*)newString(temp->field->name));
             }
         } else if (type->kind == ARRAY) {
-            // 不需要完成高维数组情况
+        
             if (type->u.array.elem->kind == ARRAY) {
                 // interError = true;
                 // printf(
@@ -473,31 +473,33 @@ void translateExp(pNode node, pOperand place) {
                     translateExp(curNode, base);
 
                     pType curType = item->field->type;
-                    pOperand offset = newTemp();
+                    // pOperand offset = newTemp();
                     pOperand low_offset = newTemp();
                     pOperand width;
                     pOperand target;
                     //根据名字循环计算，每一层的偏移量，当层的偏移量存储在low_offset, 最终总的偏移存储在offset中。
+                    
+                    if (base->kind == OP_VARIABLE) {
+                        // printf("非结构体数组访问\n");
+                        // target = newTemp();
+                        // genInterCode(IR_GET_ADDR, target, base);
+                        genInterCode(IR_GET_ADDR, place,base);
+                    } else {
+                        // printf("结构体数组访问\n");
+                        genInterCode(IR_ASSIGN, place,base);
+                    }   
+                    
                     while(top>0){
                         top--;
                         width = newOperand(
                             OP_CONSTANT, getSize(curType->u.array.elem));
                         genInterCode(IR_MUL, low_offset, idxs[top], width);
-                        genInterCode(IR_ADD, offset, offset, low_offset);
+                        genInterCode(IR_ADD, place, place, low_offset);
                         curType=curType->u.array.elem;
-                       
                     }
-                    if (base->kind == OP_VARIABLE) {
-                        // printf("非结构体数组访问\n");
-                        target = newTemp();
-                        genInterCode(IR_GET_ADDR, target, base);
-                       
-                    } else {
-                        // printf("结构体数组访问\n");
-                        target = base;
-                    }
+                 
                     //将基地址和偏移量相加得到最终地址
-                    genInterCode(IR_ADD, place, target, offset);
+                    // genInterCode(IR_ADD, place, target, offset);
                     place->kind = OP_ADDRESS;
                     interCodeList->lastArrayName = base->u.name;
                 } else {
@@ -518,15 +520,16 @@ void translateExp(pNode node, pOperand place) {
                     genInterCode(IR_MUL, offset, idx, width);
                     // 如果是ID[Exp],
                     // 则需要对ID取址，如果前面是结构体内访问，则会返回一个地址类型，不需要再取址
-                    if (base->kind == OP_VARIABLE) {
-                        // printf("非结构体数组访问\n");
-                        target = newTemp();
-                        genInterCode(IR_GET_ADDR, target, base);
+                    // if (base->kind == OP_VARIABLE) {
+                    //     // printf("非结构体数组访问\n");
+                    //     target = newTemp();
+                    //     genInterCode(IR_GET_ADDR, target, base);
                         
-                    } else {
-                        // printf("结构体数组访问\n");
-                        target = base;
-                    }
+                    // } else {
+                    //     // printf("结构体数组访问\n");
+                    //     target = base;
+                    // }
+                    target = base;
                     genInterCode(IR_ADD, place, target, offset);
                     place->kind = OP_ADDRESS;
                     interCodeList->lastArrayName = base->u.name;
@@ -542,14 +545,15 @@ void translateExp(pNode node, pOperand place) {
                 // 两种情况，Exp直接为一个变量，则需要先取址，若Exp为数组或者多层结构体访问或结构体形参，则target会被填成地址，可以直接用。
                 pOperand target;
 
-                if (temp->kind == OP_ADDRESS) {
-                    target = newOperand(temp->kind, temp->u.name);
-                    // target->isAddr = TRUE;
-                } else {
-                    target = newTemp();
-                    genInterCode(IR_GET_ADDR, target, temp);
-                }
-
+                // if (temp->kind == OP_ADDRESS) {
+                //     target = newOperand(temp->kind, temp->u.name);
+                //     // target->isAddr = TRUE;
+                    
+                // } else {
+                //     target = newTemp();  
+                //     genInterCode(IR_GET_ADDR, target, temp);
+                // }
+                target = newOperand(temp->kind, temp->u.name);
                 pOperand id = newOperand(
                     OP_VARIABLE, newString(node->child->next->next->val));
                 int offset = 0;
@@ -579,6 +583,8 @@ void translateExp(pNode node, pOperand place) {
                 if (place) {
                     genInterCode(IR_ADD, place, target, tOffset);
                     // 为了处理结构体里的数组把id名通过place回传给上层
+
+
                     setOperand(place, OP_ADDRESS, (void*)newString(id->u.name));
                     // place->isAddr = TRUE;
                 }
@@ -623,7 +629,7 @@ void translateExp(pNode node, pOperand place) {
                             searchTableItem(table, argTemp->op->u.name);
 
                         // 结构体作为参数需要传址
-                        if (item && item->field->type->kind == STRUCTURE) {
+                        if (item && (item->field->type->kind == STRUCTURE||item->field->type->kind == ARRAY) ) {
                             pOperand varTemp = newTemp();
                             genInterCode(IR_GET_ADDR, varTemp, argTemp->op);
                             pOperand varTempCopy =
@@ -668,15 +674,16 @@ void translateExp(pNode node, pOperand place) {
         pItem item = searchTableItem(table, node->child->val);
         // 根据讲义，因为结构体不允许赋值，结构体做形参时是传址的方式
         interCodeList->tempVarNum--;
-        if (item->field->isArg) {
-            setOperand(place, OP_ADDRESS, (void*)newString(node->child->val));
-            // place->isAddr = TRUE;
-        }
-        // 非结构体参数情况都当做变量处理
-        else {
-            setOperand(place, OP_VARIABLE, (void*)newString(node->child->val));
-        }
-
+        // if (item->field->isArg ) {
+        //     setOperand(place, OP_ADDRESS, (void*)newString(node->child->val));
+        //     // place->isAddr = TRUE;
+            
+        // }
+        // // 非结构体参数情况都当做变量处理
+        // else {
+        //     setOperand(place, OP_VARIABLE, (void*)newString(node->child->val));
+        // }
+        setOperand(place, OP_VARIABLE, (void*)newString(node->child->val));
         // pOperand t1 = newOperand(OP_VARIABLE, id_name->field->name);
         // genInterCode(IR_ASSIGN, place, t1);
     } else {

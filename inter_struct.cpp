@@ -303,6 +303,9 @@ void printInterCode(FILE* fp, pInterCodeList interCodeList) {
                     break;
                 case IR_WRITE:
                     printf("WRITE ");
+                    if(cur->code->u.oneOp.op->kind==OP_ADDRESS){
+                        printf("*");
+                    }
                     printOp(fp, cur->code->u.oneOp.op);
                     break;
             }
@@ -411,6 +414,9 @@ void printInterCode(FILE* fp, pInterCodeList interCodeList) {
                     break;
                 case IR_WRITE:
                     fprintf(fp, "WRITE ");
+                    if(cur->code->u.oneOp.op->kind==OP_ADDRESS){
+                        fprintf(fp,"*");
+                    }
                     printOp(fp, cur->code->u.oneOp.op);
                     break;
             }

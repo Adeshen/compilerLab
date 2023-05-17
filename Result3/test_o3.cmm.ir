@@ -8,35 +8,29 @@ IF idx < len GOTO label2
 GOTO label3
 LABEL label2 :
 t3 := idx * #4
-t4 := *a
-t1 := t4 + t3
-t4 := *t1
-IF t4 > m GOTO label4
+t1 := a + t3
+t3 := *t1
+IF t3 > m GOTO label4
 GOTO label5
 LABEL label4 :
-t6 := idx * #4
-t7 := *a
-t5 := t7 + t6
-m := *t5
+t5 := idx * #4
+t4 := a + t5
+m := *t4
 LABEL label5 :
-t8 := idx + #1
-idx := t8
+t6 := idx + #1
+idx := t6
 GOTO label1
 LABEL label3 :
 RETURN m
 FUNCTION func2 :
 PARAM p1
 PARAM p2
-t10 := *p1
-t11 := *p2
-t9 := t10 / t11
-t1 := t9
-t13 := *p2
-t12 := t1 * t13
-t2 := t12
-t15 := *p1
-t14 := t15 - t2
-t3 := t14
+t7 := p1 / p2
+t1 := t7
+t8 := t1 * p2
+t2 := t8
+t9 := p1 - t2
+t3 := t9
 RETURN t3
 FUNCTION main :
 arr_len := #2
@@ -53,68 +47,59 @@ LABEL label9 :
 IF idx2 < arr_len GOTO label10
 GOTO label11
 LABEL label10 :
-t17 := idx1 + idx2
-ARG t17
+t11 := idx1 + idx2
+ARG t11
 ARG arr_len
-t16 := CALL func2
-t20 := idx1 * #8
-t19 := t19 + t20
-t20 := idx2 * #4
-t19 := t19 + t20
-t21 := &arr
-t18 := t21 + t19
-*t18 := t16
-t22 := idx2 + #1
-idx2 := t22
+t10 := CALL func2
+t12 := &arr
+t13 := idx1 * #8
+t12 := t12 + t13
+t13 := idx2 * #4
+t12 := t12 + t13
+*t12 := t10
+t14 := idx2 + #1
+idx2 := t14
 GOTO label9
 LABEL label11 :
-t25 := idx1 * #8
-t26 := &arr
-t24 := t26 + t25
-ARG t24
-t23 := CALL func1
-t28 := idx1 * #4
-t29 := &sum_arr
-t27 := t29 + t28
-*t27 := t23
-t30 := idx1 + #1
-idx1 := t30
+t17 := idx1 * #8
+t16 := arr + t17
+ARG t16
+t15 := CALL func1
+t19 := idx1 * #4
+t18 := sum_arr + t19
+*t18 := t15
+t20 := idx1 + #1
+idx1 := t20
 GOTO label6
 LABEL label8 :
-t33 := #0 * #8
-t32 := t32 + t33
-t33 := #0 * #4
-t32 := t32 + t33
-t34 := &arr
-t31 := t34 + t32
-WRITE t31
-t37 := #0 * #8
-t36 := t36 + t37
-t37 := #1 * #4
-t36 := t36 + t37
-t38 := &arr
-t35 := t38 + t36
-WRITE t35
-t41 := #1 * #8
-t40 := t40 + t41
-t41 := #0 * #4
-t40 := t40 + t41
-t42 := &arr
-t39 := t42 + t40
-WRITE t39
-t45 := #1 * #8
-t44 := t44 + t45
-t45 := #1 * #4
-t44 := t44 + t45
-t46 := &arr
-t43 := t46 + t44
-WRITE t43
-t48 := #0 * #4
-t49 := &sum_arr
-t47 := t49 + t48
-WRITE t47
-t51 := #1 * #4
-t52 := &sum_arr
-t50 := t52 + t51
-WRITE t50
+t21 := &arr
+t22 := #0 * #8
+t21 := t21 + t22
+t22 := #0 * #4
+t21 := t21 + t22
+WRITE *t21
+t23 := &arr
+t24 := #0 * #8
+t23 := t23 + t24
+t24 := #1 * #4
+t23 := t23 + t24
+WRITE *t23
+t25 := &arr
+t26 := #1 * #8
+t25 := t25 + t26
+t26 := #0 * #4
+t25 := t25 + t26
+WRITE *t25
+t27 := &arr
+t28 := #1 * #8
+t27 := t27 + t28
+t28 := #1 * #4
+t27 := t27 + t28
+WRITE *t27
+t30 := #0 * #4
+t29 := sum_arr + t30
+WRITE *t29
+t32 := #1 * #4
+t31 := sum_arr + t32
+WRITE *t31
 RETURN #0
