@@ -275,7 +275,9 @@ test_o1 test_2  函数声明冲突   解决
 
 * [x] 设计存储中间代码的结构
 * [x] 节点翻译函数
-* [ ] 虚拟机测试
+* [x] 虚拟机测试
+* [x] 支持多维度数组
+* [x] 支持结构体传参
 
 
 
@@ -470,7 +472,7 @@ pOperand newTemp() {
 
 ### test_o1.cmm  没有区分函数入参的结构体与函数内声明的结构体
 
- 
+ 在传入的结构之时直接标记结构体为OP_ADDRESS, 如此就不会在运算成员地址时，重新取地址而是直接使用
 
 
 
@@ -524,6 +526,13 @@ sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
 ```
 
 
+
+所有测试翻译结果都在文件夹Result3中，
+
+* [ ] test1.cmm
+* [ ] test2.cmm
+* [ ] test_o1.cmm
+* [ ] test_o2.cmm
 
 
 

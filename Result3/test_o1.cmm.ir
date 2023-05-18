@@ -1,16 +1,16 @@
 FUNCTION add :
 PARAM temp
-o1 := temp + #0
-o2 := temp + #4
+o1 := temp + #8
+o2 := temp + #12
 t4 := *o1
 t5 := *o2
 t1 := t4 + t5
 RETURN t1
 FUNCTION main :
-DEC op 8
-o1 := op + #0
+DEC op 16
+o1 := op + #8
 *o1 := #1
-o2 := op + #4
+o2 := op + #12
 *o2 := #2
 t9 := &op
 ARG t9
