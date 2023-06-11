@@ -38,6 +38,14 @@ build:clean  parser
 
 all: build
 
+test_lab4:parser 
+	@echo ;echo
+	@echo _________TEST $(MAIN_CASE) TEST_____________
+	@cat Test3/$(MAIN_CASE)
+	@echo ;echo
+
+	@./parser Test4/$(MAIN_CASE) Result4/$(MAIN_CASE).ir
+
 
 test_lab3:parser 
 	@echo ;echo

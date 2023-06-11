@@ -253,7 +253,7 @@ test_o1 test_2  函数声明冲突   解决
 
 * 问题6：函数类型等价
 
-原因：此前没有考虑过，函数可以声明，再定义；声明多次， 
+原因：此前没有考虑过，函数可以声明，再定义；声明多次，
 
 解决方案：增加函数类型比较机制
 
@@ -267,19 +267,15 @@ test_o1 test_2  函数声明冲突   解决
 
 `make test MAIN_CASE=test2.cmm`
 
-
-
 # lab3 中间代码翻译
 
 ## 需求分析
 
-* [x] 设计存储中间代码的结构
-* [x] 节点翻译函数
-* [x] 虚拟机测试
-* [x] 支持多维度数组
-* [x] 支持结构体传参
-
-
+* [X] 设计存储中间代码的结构
+* [X] 节点翻译函数
+* [X] 虚拟机测试
+* [X] 支持多维度数组
+* [X] 支持结构体传参
 
 ## 设计代码结构体
 
@@ -287,7 +283,7 @@ test_o1 test_2  函数声明冲突   解决
 
 操作数+指令类型
 
-``` cpp
+```cpp
 typedef enum _operand_kind{
         OP_VARIABLE,
         OP_CONSTANT,
@@ -354,15 +350,11 @@ typedef struct _interCode {
 
 ```
 
-不同的类型对应着不同翻译方案，具体的翻译在`printInterCode`函数
-
-
+不同的类型对应着不同翻译方案，具体的翻译在 `printInterCode`函数
 
 ## 翻译过程举例——多维数据进行距离
 
 翻译的整体过程过于复杂，我以exp  这个最为齐全的概念进行举例
-
-
 
 代码基本数据从何而来？
 
@@ -370,11 +362,7 @@ typedef struct _interCode {
 
 代码最终结果如何转化？
 
-
-
-
-
-``` cpp
+```cpp
 pOperand newTemp() {
     // printf("newTemp() tempVal:%d\n", interCodeList->tempVarNum);
     char tName[10] = {0};
@@ -385,9 +373,7 @@ pOperand newTemp() {
 }
 ```
 
-
-
-``` cpp
+```cpp
         // 数组和结构体访问
         else {
             // Exp -> Exp LB Exp RB
@@ -407,11 +393,11 @@ pOperand newTemp() {
                     pNode curNode=node;   
                     pOperand idxs[100];
                     int top=0;
-                    
+                  
                     //  循环找到 数组名字，并在各层 中找到 [idx],并存储在idxs数组中
      				//   例如arr[id0][id1][id2]
                     while(strcmp(curNode->child->name,"ID")){
-                       
+                     
                         idxs[top]=newTemp();
                         translateExp(curNode->child->next->next, idxs[top]);
                         curNode=curNode->child;
@@ -435,7 +421,7 @@ pOperand newTemp() {
                         genInterCode(IR_MUL, low_offset, idxs[top], width);
                         genInterCode(IR_ADD, offset, offset, low_offset);
                         curType=curType->u.array.elem;
-                       
+                     
                     }
                     if (base->kind == OP_VARIABLE) {
                         // printf("非结构体数组访问\n");
@@ -452,43 +438,21 @@ pOperand newTemp() {
                 }
 ```
 
-
-
-
-
-
-
-
-
 ## 产生错误
 
-
-
 ### test2.cmm  function 参数传入时没有添加ARG
-
-
-
-
 
 ### test_o1.cmm  没有区分函数入参的结构体与函数内声明的结构体
 
  在传入的结构之时直接标记结构体为OP_ADDRESS, 如此就不会在运算成员地址时，重新取地址而是直接使用
 
-
-
 ### test_o2.cmm   while 无法识别
 
 原来是词法识别时，while语句写错了名字，协程THILE
 
-
-
-
-
 ### test_o3.cmm  多维数组无法识别，已经修复
 
 Cannot translate: Code containsvariables of multi-dimensional array type or parameters of array type
-
-
 
 一开始并未处理多维数组的情况，
 
@@ -500,15 +464,11 @@ Cannot translate: Code containsvariables of multi-dimensional array type or para
 
 3.传递参数中
 
-
-
 ### test_o4.cmm
 
 Error type B at line 25: syntax error.
 Error type B at line 30: syntax error.
 Error type B at line 41: syntax error.
-
-
 
 发现是词法分析中，没有单独识别 "&&"  "||"
 
@@ -520,12 +480,10 @@ Error type B at line 41: syntax error.
 
 安装测试工具
 
-``` bash
+```bash
 sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
 
 ```
-
-
 
 所有测试翻译结果都在文件夹Result3中，
 
@@ -536,6 +494,88 @@ sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
 
 
 
+# lab4 目标代码翻译
+
+## 核心问题
+
+1) 中间代码与目标代码之间并不是严格一一对应的。有可能某条中间代码对应多条目标 代码，也有可能多条中间代码对应一条目标代码。
+2) 中间代码中我们使用了数目不受限的变量和临时变量，但处理器所拥有的寄存器数量 是有限的。RISC机器的一大特点就是运算指令的操作数总是从寄存器中获得。 
+3) 中间代码中我们并没有处理有关函数调用的细节。函数调用在中间代码中被抽象为若 干条ARG语句和一条CALL语句，但在目标机器上一般不会有专门的器件为我们进行参数传 递，我们必须借助于寄存器或栈来完成这一点。
+
+
+
+第一个问题被称为指令选择（Instruction Selection）问题，
+
+第二个问题被称为寄存器分配（Register Allocation）问题，
+
+第三个问题则需要考虑如何对栈进行管理。
+
+
+
+在实验四 中我们的主要任务就是编写程序来处理这三个问题。
+
+
+
+
+
+## 翻译方案
+
+
+
+### 指令选择
+
+有的时候为了得到更高效的目标代码，我们需要一次考察多条中间代 码，以期可以将多条中间代码翻译为一条MIPS32代码。这个过程可以看作是一个多行的模式 匹配，也可以看成用一个滑动窗口（Sliding Window）或一个窥孔（Peephole）滑过中间代码并查找可能的翻译方案的过程。这非常类似于我们课本上介绍的“窥孔优化”（Peephole  Optimization）的局部代码优化技术。
+
+树形IR的翻译方式类似于线形IR，也是一个模式匹配的过程。不过我们需要寻找的模式不 再是一句句线形代码，而是某种结构的子树。树形IR的匹配与翻译算法被称为“树重写” （Tree-rewriting）算法，这在课本上也有介绍。
+
+
+
+如何在中间代码中找到该图所对应的模式呢？答案是遍历。
+
+
+
+### 朴素寄存器分配
+
+RISC机器的一个很显著的特点是，除了load/store型指令之外，其余指令的所有操作数都 必须来自寄存器而不是内存。
+
+除了数组和结构体必须放到内存中之外，中间代码里的任何一个 非零变量或临时变量，只要它参与运算，其值必须被载入到某个寄存器中。在某个特定的程序 点上选择哪个寄存器来保存哪个变量的值，这就是寄存器分配所要研究的问题。
+
+
+
+朴素寄存器分配算法的思想最简单，也最低效：将所有的变量或临时变量都放在内存里。
+
+寄存器分配之所以难是因为寄存器的数量有限，被迫共用同一寄存器的变量太多，导致这 些变量在使用时不得不在寄存器里换入换出，从而产生较大的访存开销。
+
+
+
+我们考虑如何通过合 理安排变量对寄存器的共用关系来最大限度地减少寄存器内容换入换出的代价。有一种较好的 方法叫局部寄存器分配算法，该方法会事先将整段代码分拆成一个个基本块（将一段代码划分 成基本块的过程课本上有介绍，我们这里不再赘述），在每个基本块内部我们根据各种启发式 原则为块里出现的变量分配寄存器。
+
+
+
+### 局部寄存器分配算法
+
+其中，Free(r)表示将寄存器r标记为闲置。算法还用到另外两个辅助函数Ensure和 Allocate，它们的实现为：
+
+
+
+上述算法的核心思想其实很简单：对基本块内部的中间代码逐条扫描，如果当前代码中有 变量需要使用寄存器，就从当前空闲的寄存器中选一个分配出去；如果没有空闲的寄存器，不 得不将某个寄存器中的内容写回内存（该操作称为溢出或spilling）时，则选择**那个包含本基 本块内将来用不到或最久以后才用到的变量的寄存器**。通过这种启发式规则，该算法期望可以 最大化每次溢出操作的收益，从而减少访存所需要的次数。
+
+与缓存是一样的思路，和TLB也是一样的思路。
+
+
+
+### 寄存器分配（图染色算法）
+
+局部寄存器分配算法的这一弱点启发我们去寻找一个适用于全局的寄存器分配算法，这种 全局分配算法必须要能有效地从中间代码的控制流中获取变量的活跃信息，**而活跃变量分析 （Liveliness Analysis）恰好可以为我们提供这些信息**。
+
+
+
+一个显而易见的寄存器分配原则就是，同时活跃的两个变量尽量不要分配 相同的寄存器。
+
+
+
+1) 在赋值操作x := y中，即使x和y在这条代码之后都活跃，因为二者值是相等的，它们仍 然可以共用寄存器。
+2) 
 
 
 
@@ -545,26 +585,5 @@ sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.
 

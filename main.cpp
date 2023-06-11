@@ -5,6 +5,7 @@
 #include "semantic.h"
 #include "inter.h"
 #include "inter_struct.h"
+#include "assembly.h"
 
 bool lexError=false;
 bool synError=false;
@@ -51,6 +52,7 @@ int  main (int argc, char *argv[])
             if (!interError) {
                 //printInterCode(NULL, interCodeList);
                 printInterCode(fw, interCodeList);
+                genAssemblyCode(fw);
             }
         }
 
