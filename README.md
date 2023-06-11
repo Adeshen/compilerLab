@@ -524,66 +524,323 @@ sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
 
 ### 指令选择
 
-有的时候为了得到更高效的目标代码，我们需要一次考察多条中间代 码，以期可以将多条中间代码翻译为一条MIPS32代码。这个过程可以看作是一个多行的模式 匹配，也可以看成用一个滑动窗口（Sliding Window）或一个窥孔（Peephole）滑过中间代码并查找可能的翻译方案的过程。这非常类似于我们课本上介绍的“窥孔优化”（Peephole  Optimization）的局部代码优化技术。
+虽然已经学习窥孔优化，但是由于识别每一种特征都需要大量的代码，
 
-树形IR的翻译方式类似于线形IR，也是一个模式匹配的过程。不过我们需要寻找的模式不 再是一句句线形代码，而是某种结构的子树。树形IR的匹配与翻译算法被称为“树重写” （Tree-rewriting）算法，这在课本上也有介绍。
-
-
-
-如何在中间代码中找到该图所对应的模式呢？答案是遍历。
+所以我在本项目中并没有采取整体优化编译代码，而是简单地直接将每一个节点中间代码单独转化成了MIPS汇编代码。
 
 
-
-### 朴素寄存器分配
-
-RISC机器的一个很显著的特点是，除了load/store型指令之外，其余指令的所有操作数都 必须来自寄存器而不是内存。
-
-除了数组和结构体必须放到内存中之外，中间代码里的任何一个 非零变量或临时变量，只要它参与运算，其值必须被载入到某个寄存器中。在某个特定的程序 点上选择哪个寄存器来保存哪个变量的值，这就是寄存器分配所要研究的问题。
-
-
-
-朴素寄存器分配算法的思想最简单，也最低效：将所有的变量或临时变量都放在内存里。
-
-寄存器分配之所以难是因为寄存器的数量有限，被迫共用同一寄存器的变量太多，导致这 些变量在使用时不得不在寄存器里换入换出，从而产生较大的访存开销。
-
-
-
-我们考虑如何通过合 理安排变量对寄存器的共用关系来最大限度地减少寄存器内容换入换出的代价。有一种较好的 方法叫局部寄存器分配算法，该方法会事先将整段代码分拆成一个个基本块（将一段代码划分 成基本块的过程课本上有介绍，我们这里不再赘述），在每个基本块内部我们根据各种启发式 原则为块里出现的变量分配寄存器。
 
 
 
 ### 局部寄存器分配算法
 
-其中，Free(r)表示将寄存器r标记为闲置。算法还用到另外两个辅助函数Ensure和 Allocate，它们的实现为：
-
-
-
-上述算法的核心思想其实很简单：对基本块内部的中间代码逐条扫描，如果当前代码中有 变量需要使用寄存器，就从当前空闲的寄存器中选一个分配出去；如果没有空闲的寄存器，不 得不将某个寄存器中的内容写回内存（该操作称为溢出或spilling）时，则选择**那个包含本基 本块内将来用不到或最久以后才用到的变量的寄存器**。通过这种启发式规则，该算法期望可以 最大化每次溢出操作的收益，从而减少访存所需要的次数。
+对基本块内部的中间代码逐条扫描，如果当前代码中有 变量需要使用寄存器，就从当前空闲的寄存器中选一个分配出去；如果没有空闲的寄存器，不 得不将某个寄存器中的内容写回内存（该操作称为溢出或spilling）时，则选择**那个包含本基 本块内将来用不到或最久以后才用到的变量的寄存器**。通过这种启发式规则，该算法期望可以 最大化每次溢出操作的收益，从而减少访存所需要的次数。
 
 与缓存是一样的思路，和TLB也是一样的思路。
 
 
 
-### 寄存器分配（图染色算法）
+在实际的代码实现中，我做了更加符合直觉优化——优先释放最近没有使用过的立即数寄存器，如果没有再选择释放最近没有使用过的变量寄存器。
 
-局部寄存器分配算法的这一弱点启发我们去寻找一个适用于全局的寄存器分配算法，这种 全局分配算法必须要能有效地从中间代码的控制流中获取变量的活跃信息，**而活跃变量分析 （Liveliness Analysis）恰好可以为我们提供这些信息**。
+``` cpp
+int allocReg(pRegisters registers, pVarTable varTable, pOperand op) {
+    // 先看有无空闲，有就直接放
+    // printf("allocNewReg\n");
+    for (int i = T0; i <= T9; i++) {
+        if (registers->regLsit[i]->isFree) {
+            registers->regLsit[i]->isFree = 0;
+            addVarible(varTable->varListReg, i, op);
+            return i;
+        }
+    }
+    // printf("nofree\n");
+    // 无空闲了，需要找一个寄存器释放掉
+    // 可以先释放掉最近没用过的立即数
+    pVarible temp = varTable->varListReg->head;
+    while (temp) {
+        if (temp->op->kind == OP_CONSTANT &&
+            temp->regNo != registers->lastChangedNo) {
+            int regNo = temp->regNo;
+            registers->lastChangedNo = regNo;
+            delVarible(varTable->varListReg, temp);
+            addVarible(varTable->varListReg, regNo, op);
+            return regNo;
+        }
+        temp = temp->next;
+    }
+
+    // 如果没有立即数，就找一个最近没用过的临时变量的释放掉
+    temp = varTable->varListReg->head;
+    while (temp) {
+        if (temp->op->kind != OP_CONSTANT) {
+            if (temp->op->u.name[0] == 't' &&
+                temp->regNo != registers->lastChangedNo) {
+                int regNo = temp->regNo;
+                registers->lastChangedNo = regNo;
+                delVarible(varTable->varListReg, temp);
+                addVarible(varTable->varListReg, regNo, op);
+                return regNo;
+            }
+        }
+        temp = temp->next;
+    }
+}
+```
 
 
 
-一个显而易见的寄存器分配原则就是，同时活跃的两个变量尽量不要分配 相同的寄存器。
+### 内存管理
 
 
 
-1) 在赋值操作x := y中，即使x和y在这条代码之后都活跃，因为二者值是相等的，它们仍 然可以共用寄存器。
-2) 
-
-
-
+### 栈的管理
 
 
 
 
 
+## MIPS翻译流程
 
-.
+
+
+### 整体流程
+
+1. 初始化寄存器、变量表、
+2. 初始化代码配置，提前写入read、write两个核心函数
+3. 开始打印中间代码链表
+4. 销毁寄存器表，变量表
+
+
+
+``` cpp
+void genAssemblyCode(FILE* fp) {
+    registers = initRegisters();
+    varTable = newVarTable();
+    initCode(fp);
+    printf("init success\n");
+    pInterCodes temp = interCodeList->head;
+    while (temp) {
+        interToAssem(fp, temp);
+        // printVarList(varTable->varListReg);
+        temp = temp->next;
+    }
+    printf("gen end\n");
+    deleteRegisters(registers);
+    deleteVarTable(varTable);
+    registers = NULL;
+    varTable = NULL;
+}
+
+```
+
+
+
+### 翻译单个节点
+
+翻译单个中间代码节点，首先取决单个节点的类型，再决定翻译的方式。
+
+中间代码存在19种类型，因而我们有需要分开19种来翻译。
+
+但是最特别的是函数调用的翻译过程，所以接下来，详细解析以下函数定义过程，与函数调用过程。
+
+``` cpp
+void interToAssem(FILE* fp, pInterCodes interCodes) {
+    // printf("gen one\n");
+    // printinter(interCodes);
+    pInterCode interCode = interCodes->code;
+    int kind = interCode->kind;
+    if (kind == IR_LABEL) {
+        
+    } else if (kind == IR_FUNCTION) {
+
+    } else if (kind == IR_GOTO) {
+
+    } else if (kind == IR_RETURN) {
+
+    } else if (kind == IR_ARG) {
+
+    } else if (kind == IR_PARAM) {
+        // 需要在function里处理
+    } else if (kind == IR_READ) {
+
+    } else if (kind == IR_WRITE) {
+
+    } else if (kind == IR_ASSIGN) {
+
+    } else if (kind == IR_GET_ADDR) {
+
+    } else if (kind == IR_READ_ADDR) {
+
+    } else if (kind == IR_WRITE_ADDR) {
+
+    } else if (kind == IR_CALL) {
+
+    } else if (kind == IR_ADD) {
+
+    } else if (kind == IR_SUB) {
+
+    } else if (kind == IR_MUL) {
+
+    } else if (kind == IR_DIV) {
+
+    } else if (kind == IR_DEC) {
+
+    } else if (kind == IR_IF_GOTO) {
+    }
+}
+```
+
+
+
+### 函数定义翻译
+
+* 首先是定义跳转标签
+* 清空母函数的留存在变量表的数据，包括在寄存器中的、内存中的
+* 如果是main 函数就无需进行复杂操作，如果是继续进行如下操作
+* 
+
+``` cpp
+ 		fprintf(fp, "\n%s:\n", interCode->u.oneOp.op->u.name);
+        // 新函数，寄存器重新变为可用，并清空变量表（因为假定没有全局变量）
+        resetRegisters(registers);
+        clearVarList(varTable->varListReg);
+        clearVarList(varTable->varListMem);
+
+        // main函数单独处理一下，在main里调用函数不算函数嵌套调用
+        if (!strcmp(interCode->u.oneOp.op->u.name, "main")) {
+            varTable->inFunc = false;
+            varTable->curFuncName = NULL;
+        } else {
+            varTable->inFunc = true;
+            varTable->curFuncName = interCode->u.oneOp.op->u.name;
+
+            // 处理形参 IR_PARAM
+            pItem item = searchTableItem(table, interCode->u.oneOp.op->u.name);
+            int argc = 0;
+            pInterCodes temp = interCodes->next;
+            while (temp && temp->code->kind == IR_PARAM) {
+                // 前4个参数存到a0 到a3中
+                if (argc < 4) {
+                    addVarible(varTable->varListReg, A0 + argc,
+                               temp->code->u.oneOp.op);
+                } else {
+                    // 剩下的要用栈存
+                    int regNo = checkVarible(fp, varTable, registers,
+                                             temp->code->u.oneOp.op);
+                    fprintf(
+                        fp, "  lw %s, %d($fp)\n",
+                        registers->regLsit[regNo]->name,
+                        (item->field->type->u.function.argc - 1 - argc) * 4);
+                }
+                argc++;
+                temp = temp->next;
+            }
+```
+
+
+
+
+
+### 函数调用翻译
+
+
+
+
+
+
+
+
+
+##  测试案例
+
+``` cpp
+int main(){
+    int a = 0,b=1,i=0,n;
+    n=read();
+    while(i<n){
+        int c=a+b;
+        write(b);
+        a=b;
+        b=c;
+        i=i+1;
+    }
+}
+```
+
+``` ir
+FUNCTION main :
+a := #0
+b := #1
+i := #0
+READ t1
+n := t1
+LABEL label1 :
+IF i < n GOTO label2
+GOTO label3
+LABEL label2 :
+t2 := a + b
+c := t2
+WRITE b
+a := b
+b := c
+t3 := i + #1
+i := t3
+GOTO label1
+LABEL label3 :
+```
+
+``` asm
+.data
+_prompt: .asciiz "Enter an integer:"
+_ret: .asciiz "\n"
+.globl main
+.text
+read:
+  li $v0, 4
+  la $a0, _prompt
+  syscall
+  li $v0, 5
+  syscall
+  jr $ra
+
+write:
+  li $v0, 1
+  syscall
+  li $v0, 4
+  la $a0, _ret
+  syscall
+  move $v0, $0
+  jr $ra
+
+main:
+  li $t0, 0
+  li $t1, 1
+  li $t2, 0
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal read
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  move $t3, $v0
+  move $t4, $t3
+label1:
+  blt $t2, $t4, label2
+  j label3
+label2:
+  add $t5, $t0, $t1
+  move $t6, $t5
+  move $a0, $t1
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal write
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  move $t0, $t1
+  move $t1, $t6
+  addi $t7, $t2, 1
+  move $t2, $t7
+  j label1
+label3:
+
+```
 

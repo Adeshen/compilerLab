@@ -5,15 +5,15 @@
             "name": "(gdb) Bash on Windows Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/mnt/d/学习/grade3-2/compiler_lib/lab3/code/parser",
-            "args": ["Test3/test_o2.cmm","test.out"],
+            "program": "/mnt/d/SUSYstudy/Grade3-2/compiler_theome/lab4/code/parser",
+            "args": ["Test4/example.cmm","Result4/example.s"],
             "stopAtEntry": false,
             "miDebuggerArgs": "",
-            "cwd": "/mnt/d/学习/grade3-2/compiler_lib/lab3/code",
+            "cwd": "/mnt/d/SUSYstudy/grade3-2/compiler_theome/lab4/code",
             "environment": [],
             "externalConsole": false,
             "sourceFileMap": {
-                "/mnt/d/": "d:\\"
+                "/mnt/d/": "d:/"
             },
             "pipeTransport": {
                 "debuggerPath": "/usr/bin/gdb",

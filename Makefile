@@ -2,7 +2,7 @@ VERSION=lab2
 BRANCH=main
 MES=design 
 
-OBJS = parser.o driver.o token.o main.o semantic_symbol_struct.o semantic.o inter_struct.o inter.o 
+OBJS = parser.o driver.o token.o main.o semantic_symbol_struct.o semantic.o inter_struct.o inter.o  assembly.o
 LLVMCONFIG = llvm-config
 CPPFLAGS =  -std=c++11 -fpermissive   -Wall -c -g
 LDFLAGS =  -lpthread -ldl -lz -lncurses -rdynamic
@@ -10,7 +10,7 @@ LIBS = ` `
 TEST_PATH=./Test2
 WARN_FLAG= --no-warnings
 CASE=test1.cmm test2.cmm test_d1.cmm test_d2.cmm test_o1.cmm test_o2.cmm test_o3.cmm test_o4.cmm test_o5.cmm
-MAIN_CASE=test1.cmm
+MAIN_CASE=1.cmm
 
 parser: $(OBJS)
 	g++ -o $@ $(OBJS)  $(LDFLAGS) $(WARN_FLAG) 
@@ -41,10 +41,10 @@ all: build
 test_lab4:parser 
 	@echo ;echo
 	@echo _________TEST $(MAIN_CASE) TEST_____________
-	@cat Test3/$(MAIN_CASE)
+	@cat Test4/$(MAIN_CASE)
 	@echo ;echo
 
-	@./parser Test4/$(MAIN_CASE) Result4/$(MAIN_CASE).ir
+	@./parser Test4/$(MAIN_CASE) Result4/$(MAIN_CASE).s
 
 
 test_lab3:parser 

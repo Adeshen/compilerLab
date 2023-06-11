@@ -51,7 +51,7 @@ int  main (int argc, char *argv[])
             genInterCodes(root);        
             if (!interError) {
                 //printInterCode(NULL, interCodeList);
-                printInterCode(fw, interCodeList);
+                // printInterCode(fw, interCodeList);
                 genAssemblyCode(fw);
             }
         }
