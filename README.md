@@ -494,7 +494,7 @@ sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
 
 
 
-# lab4 目标代码翻译
+# lab4 MIPS目标代码翻译
 
 ## 核心问题
 
@@ -591,9 +591,46 @@ int allocReg(pRegisters registers, pVarTable varTable, pOperand op) {
 
 ### 内存管理
 
+使用变量表，维护所有变量，
+
+``` cpp
+typedef struct _varTable {
+    pVarList varListReg;  // 寄存器中的变量表
+    pVarList varListMem;  // 内存中的变量表
+    bool inFunc;
+    char* curFuncName;
+} VarTable;
+```
+
+
+
+
+
 
 
 ### 栈的管理
+
+整个栈的增长方向是向负数地址增长的。
+
+栈中存储有各个函数的栈帧，
+
+每个栈帧都存储着对应函数的栈变量，
+
+
+
+
+
+``` cpp
+void pusha(FILE* fp) {
+    fprintf(fp, "  addi $sp, $sp, -72\n");
+    for (int i = T0; i <= T9; i++) {
+        fprintf(fp, "  sw %s, %d($sp)\n", registers->regLsit[i]->name,
+                (i - T0) * 4);
+    }
+}
+```
+
+
 
 
 
@@ -695,9 +732,18 @@ void interToAssem(FILE* fp, pInterCodes interCodes) {
 ### 函数定义翻译
 
 * 首先是定义跳转标签
+
 * 清空母函数的留存在变量表的数据，包括在寄存器中的、内存中的
-* 如果是main 函数就无需进行复杂操作，如果是继续进行如下操作
-* 
+
+* 如果是main 函数就无需进行复杂操作，如果不是继续进行如下操作
+
+* 记录以下当前函数名字
+
+* **将前四个参数存放在a0-3中**
+
+* **其余参数存放在堆栈中，默认存储小参数int**
+
+  
 
 ``` cpp
  		fprintf(fp, "\n%s:\n", interCode->u.oneOp.op->u.name);
@@ -743,9 +789,92 @@ void interToAssem(FILE* fp, pInterCodes interCodes) {
 
 ### 函数调用翻译
 
+* 第一阶段：存储当前函数的返回地址到堆栈
 
+``` cpp
+ 		pItem calledFunc =
+            searchTableItem(table, interCode->u.assign.right->u.name);
+        int leftRegNo =
+            checkVarible(fp, varTable, registers, interCode->u.assign.left);
+        // 函数调用前的准备
+        fprintf(fp, "  addi $sp, $sp, -4\n");
+        fprintf(fp, "  sw $ra, 0($sp)\n");
+        pusha(fp);
+```
 
+* 第二阶段：如果是函数嵌套调用，把curFunc的形参存到内存，腾出a0-a3寄存器给新调用使用
 
+``` cpp
+        if (varTable->inFunc) {
+            fprintf(fp, "  addi $sp, $sp, -%d\n",
+                    calledFunc->field->type->u.function.argc * 4);
+            pItem curFunc = searchTableItem(table, varTable->curFuncName);
+            for (int i = 0; i < curFunc->field->type->u.function.argc; i++) {
+                if (i > calledFunc->field->type->u.function.argc) break;
+                if (i < 4) {
+                    fprintf(fp, "  sw %s, %d($sp)\n",
+                            registers->regLsit[A0 + i]->name, i * 4);
+                    pVarible var = varTable->varListReg->head;
+                    while (var && var->regNo != A0 + i) {
+                        var = var->next;
+                    }
+                    delVarible(varTable->varListReg, var);
+                    addVarible(varTable->varListMem, -1, var->op);
+                    int regNo = checkVarible(fp, varTable, registers, var->op);
+                    fprintf(fp, "  move %s, %s\n",
+                            registers->regLsit[regNo]->name,
+                            registers->regLsit[A0 + i]->name);
+                }
+            }
+        }
+```
+
+* 第三阶段：跳转到目标函数，调用结束之后，将栈指针回到调用之前，将curFun的参数a0-a3恢复到寄存器中。
+
+``` CPP
+        fprintf(fp, "  jal %s\n", interCode->u.assign.right->u.name);
+
+        // 调用完后恢复栈指针、形参，然后恢复之前保存入栈的寄存器信息
+        if (argc > 4) fprintf(fp, "  addi $sp, $sp, %d\n", 4 * argc);
+        if (varTable->inFunc) {
+            pItem curFunc = searchTableItem(table, varTable->curFuncName);
+            for (int i = 0; i < curFunc->field->type->u.function.argc; i++) {
+                if (i > calledFunc->field->type->u.function.argc) break;
+                if (i < 4) {
+                    fprintf(fp, "  lw %s, %d($sp)\n",
+                            registers->regLsit[A0 + i]->name, i * 4);
+                    pVarible var = varTable->varListReg->head;
+                    while (var) {
+                        if (var->op->kind != OP_CONSTANT &&
+                            !strcmp(varTable->varListMem->head->op->u.name,
+                                    var->op->u.name))
+                            break;
+                        var = var->next;
+                    }
+                    if (var) {
+                        registers->regLsit[var->regNo]->isFree = true;
+                        var->regNo = A0 + i;
+                    } else {
+                        addVarible(varTable->varListReg, A0 + i,
+                                   varTable->varListMem->head->op);
+                    }
+                    delVarible(varTable->varListMem,
+                               varTable->varListMem->head);
+                }
+            }
+            fprintf(fp, "  addi $sp, $sp, %d\n",
+                    calledFunc->field->type->u.function.argc * 4);
+        }
+```
+
+* 第四阶段：将当前的函数ra重新设置为，当前函数的母函数；同时将函数调用结果返回给v0暂存，即是准备赋值给左值
+
+``` cpp
+        popa(fp);
+        fprintf(fp, "  lw $ra, 0($sp)\n");
+        fprintf(fp, "  addi $sp, $sp, 4\n");
+        fprintf(fp, "  move %s, $v0\n", registers->regLsit[leftRegNo]->name);
+```
 
 
 

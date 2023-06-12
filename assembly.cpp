@@ -490,7 +490,7 @@ void interToAssem(FILE* fp, pInterCodes interCodes) {
             searchTableItem(table, interCode->u.assign.right->u.name);
         int leftRegNo =
             checkVarible(fp, varTable, registers, interCode->u.assign.left);
-        // 函数调用前的准备
+        // 函数调用前的准备  存储当前函数的返回地址到堆栈
         fprintf(fp, "  addi $sp, $sp, -4\n");
         fprintf(fp, "  sw $ra, 0($sp)\n");
         pusha(fp);
