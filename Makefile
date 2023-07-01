@@ -10,7 +10,7 @@ LIBS = ` `
 TEST_PATH=./Test2
 WARN_FLAG= --no-warnings
 CASE=test1.cmm test2.cmm test_d1.cmm test_d2.cmm test_o1.cmm test_o2.cmm test_o3.cmm test_o4.cmm test_o5.cmm
-MAIN_CASE=1.cmm
+MAIN_CASE=example.cmm
 
 parser: $(OBJS)
 	g++ -o $@ $(OBJS)  $(LDFLAGS) $(WARN_FLAG) 
@@ -38,33 +38,40 @@ build:clean  parser
 
 all: build
 
-test_lab4:parser 
+test:parser
 	@echo ;echo
 	@echo _________TEST $(MAIN_CASE) TEST_____________
 	@cat Test4/$(MAIN_CASE)
-	@echo ;echo
 
-	@./parser Test4/$(MAIN_CASE) Result4/$(MAIN_CASE).s
+	@./parser Test4/$(MAIN_CASE) -ir ResultUltimate/$(MAIN_CASE).ir -s ResultUltimate/$(MAIN_CASE).s 
+
+# test_lab4:parser 
+# 	@echo ;echo
+# 	@echo _________TEST $(MAIN_CASE) TEST_____________
+# 	@cat Test4/$(MAIN_CASE)
+# 	@echo ;echo
+
+# 	@./parser Test4/$(MAIN_CASE) Result4/$(MAIN_CASE).s
 
 
-test_lab3:parser 
-	@echo ;echo
-	@echo _________TEST $(MAIN_CASE) TEST_____________
-	@cat Test3/$(MAIN_CASE)
-	@echo ;echo
+# test_lab3:parser 
+# 	@echo ;echo
+# 	@echo _________TEST $(MAIN_CASE) TEST_____________
+# 	@cat Test3/$(MAIN_CASE)
+# 	@echo ;echo
 
-	@./parser Test3/$(MAIN_CASE) Result3/$(MAIN_CASE).ir
+# 	@./parser Test3/$(MAIN_CASE) Result3/$(MAIN_CASE).ir
 	
-test_lab3_all:parser
-	$(foreach var,$(CASE),echo $(var);./parser Test3/$(var) Result3/$(var).ir;)
+# test_lab3_all:parser
+# 	$(foreach var,$(CASE),echo $(var);./parser Test3/$(var) Result3/$(var).ir;)
 	
 
-test_lab2:  parser 
-	@echo ;echo
-	@echo _________TEST $(MAIN_CASE) TEST_____________
-	@cat $(TEST_PATH)/$(MAIN_CASE)
-	@echo ;echo
-	@./parser $(TEST_PATH)/$(MAIN_CASE)
+# test_lab2:  parser 
+# 	@echo ;echo
+# 	@echo _________TEST $(MAIN_CASE) TEST_____________
+# 	@cat $(TEST_PATH)/$(MAIN_CASE)
+# 	@echo ;echo
+# 	@./parser $(TEST_PATH)/$(MAIN_CASE)
 
 
 testCode:semantic_symbol_struct.o  TestCode/semantic_test.o

@@ -21,22 +21,20 @@ int  main (int argc, char *argv[])
     int res = 0;
     driver drv;
     int mode=0;
-    int in=1,out=2;
-    // for (int i = 1; i < argc; ++i){
-    //     if (argv[i] == std::string ("-p"))
-    //         drv.trace_parsing = true;
-    //     else if (argv[i] == std::string ("-s"))
-    //         drv.trace_scanning = true;
-    //     else if (mode==0){
-    //         in=i; mode==1;
-    //     }
-    //     else if(mode==1){
-    //         drv.out=argv[out];
-    //     }
-    // }
+    int in=1,out_ir=-1,out_s=-1;
+    for (int i = 1; i < argc; ++i){
+        if (argv[i] == std::string ("-ir")){
+            out_ir=i+1;
+        }
+        else if (argv[i] == std::string ("-s")){
+            out_s=i+1;
+        }
+    }
+   
+
 
     drv.parse (argv[in]);      //printTreeInfo(root,0);
-    FILE* fw = fopen(argv[2], "wt+");
+    // FILE* fw = fopen(argv[2], "wt+");
     // printf("%s\n",argv[2]);
     if(!lexError && !synError){
         // fw=NULL;
@@ -50,9 +48,17 @@ int  main (int argc, char *argv[])
             interCodeList = newInterCodeList();
             genInterCodes(root);        
             if (!interError) {
-                //printInterCode(NULL, interCodeList);
-                // printInterCode(fw, interCodeList);
-                genAssemblyCode(fw);
+                // printInterCode(NULL, interCodeList);
+
+                if(out_ir>0){
+                    FILE* fw = fopen(argv[out_ir], "wt+");
+                    printInterCode(fw, interCodeList);
+                }
+                if(out_s>0){
+                    FILE* fw = fopen(argv[out_s], "wt+");
+                    genAssemblyCode(fw);
+                }
+                
             }
         }
 

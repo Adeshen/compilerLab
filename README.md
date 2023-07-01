@@ -1,3 +1,33 @@
+# 终版—编译器
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # lab1 基础语法树的建立
 
 ## 任务目标：
@@ -522,6 +552,8 @@ sudo apt-get install python3-pyqt5 python3-pyqt5.qtsvg
 
 
 
+
+
 ### 指令选择
 
 虽然已经学习窥孔优化，但是由于识别每一种特征都需要大量的代码，
@@ -615,8 +647,6 @@ typedef struct _varTable {
 栈中存储有各个函数的栈帧，
 
 每个栈帧都存储着对应函数的栈变量，
-
-
 
 
 
@@ -878,9 +908,15 @@ void interToAssem(FILE* fp, pInterCodes interCodes) {
 
 
 
-
-
 ##  测试案例
+
+测试方法：执行`make test__lab4`
+
+或者是 `./parser  <input_file>  <output_file>`
+
+
+
+
 
 ``` cpp
 int main(){
