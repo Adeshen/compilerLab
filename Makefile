@@ -43,7 +43,7 @@ test:parser
 	@echo _________TEST $(MAIN_CASE) TEST_____________
 	@cat Test4/$(MAIN_CASE)
 
-	@./parser Test4/$(MAIN_CASE) -ir ResultUltimate/$(MAIN_CASE).ir -s ResultUltimate/$(MAIN_CASE).s 
+	./parser Test4/$(MAIN_CASE) -ir ResultUltimate/$(MAIN_CASE).ir -s ResultUltimate/$(MAIN_CASE).s 
 
 # test_lab4:parser 
 # 	@echo ;echo

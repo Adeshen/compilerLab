@@ -31,6 +31,19 @@ int  main (int argc, char *argv[])
         }
     }
    
+    if(out_ir<0&&out_s<0){
+
+        printf(
+            "————help document of the compile about cmm——————  \n\n  "
+"parser <output_file> [-ir <ir_path>] [-s <s_file>]  \n\n"
+"parameter: \n"
+"  -ir assign the path of ir file, with the suffix .ir \n\n"
+"  -s assign the path of assembly file with the suffix .s \n\n"
+"reference case: \n"
+" ./parser Test4/example.cmm -ir ResultUltimate/example.cmm.ir -s ResultUltimate/example.cmm.s \n\n"
+        );
+        return 0;
+    }
 
 
     drv.parse (argv[in]);      //printTreeInfo(root,0);

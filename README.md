@@ -6,19 +6,33 @@
 
 
 
+## 编译帮助信息
+
+```
+————help document of the compile about cmm——————
+
+  parser <output_file> [-ir <ir_path>] [-s <s_file>]
+
+parameter:
+  -ir assign the path of ir file, with the suffix .ir
+
+  -s assign the path of assembly file with the suffix .s
+
+reference case:
+ ./parser Test4/example.cmm -ir ResultUltimate/example.cmm.ir -s ResultUltimate/example.cmm.s
+```
 
 
 
+## 测试
 
+可以在目录之下，直接`make test`运行
 
+或者使用
 
+` ./parser Test4/example.cmm -ir ResultUltimate/example.cmm.ir -s ResultUltimate/example.cmm.s`
 
-
-
-
-
-
-
+执行过后将会在 `ResultUltimate/` 目录下
 
 
 
