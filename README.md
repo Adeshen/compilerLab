@@ -32,9 +32,109 @@ reference case:
 
 ` ./parser Test4/example.cmm -ir ResultUltimate/example.cmm.ir -s ResultUltimate/example.cmm.s`
 
-执行过后将会在 `ResultUltimate/` 目录下
+执行过后将会在 `ResultUltimate/` 目录下生成2个文件 `example.cmm.ir`  `example.cmm.s`
 
 
+
+### example.cmm
+
+```
+int main(){
+    int a = 0,b=1,i=0,n;
+    n=read();
+    while(i<n){
+        int c=a+b;
+        write(b);
+        a=b;
+        b=c;
+        i=i+1;
+    }
+}
+```
+
+
+
+### example.cmm.ir
+
+```
+FUNCTION main :
+a := #0
+b := #1
+i := #0
+READ t1
+n := t1
+LABEL label1 :
+IF i < n GOTO label2
+GOTO label3
+LABEL label2 :
+t2 := a + b
+c := t2
+WRITE b
+a := b
+b := c
+t3 := i + #1
+i := t3
+GOTO label1
+LABEL label3 :
+```
+
+
+
+### example.cmm.s
+
+```
+.data
+_prompt: .asciiz "Enter an integer:"
+_ret: .asciiz "\n"
+.globl main
+.text
+read:
+  li $v0, 4
+  la $a0, _prompt
+  syscall
+  li $v0, 5
+  syscall
+  jr $ra
+
+write:
+  li $v0, 1
+  syscall
+  li $v0, 4
+  la $a0, _ret
+  syscall
+  move $v0, $0
+  jr $ra
+
+main:
+  li $t0, 0
+  li $t1, 1
+  li $t2, 0
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal read
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  move $t3, $v0
+  move $t4, $t3
+label1:
+  blt $t2, $t4, label2
+  j label3
+label2:
+  add $t5, $t0, $t1
+  move $t6, $t5
+  move $a0, $t1
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal write
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  move $t0, $t1
+  move $t1, $t6
+  addi $t7, $t2, 1
+  move $t2, $t7
+  j label1
+label3:
+```
 
 
 
